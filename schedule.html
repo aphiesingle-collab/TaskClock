@@ -19,30 +19,16 @@
 
   /* ── Top date bar ── */
   #date-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     padding: 12px 16px;
-    background: #141414;
-    border-bottom: 1px solid #252525;
-    flex-shrink: 0;
-    position: relative;
+    background: #141414; border-bottom: 1px solid #252525;
+    flex-shrink: 0; position: relative;
   }
-  #date-display {
-    font-size: clamp(0.9rem, 2vw, 1.2rem);
-    font-weight: 400;
-    letter-spacing: 0.2em;
-    color: #888;
-  }
+  #date-display { font-size: clamp(0.9rem, 2vw, 1.2rem); font-weight: 400; letter-spacing: 0.2em; color: #888; }
   .top-btn {
-    position: absolute;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px 8px;
-    font-size: 0.85rem;
-    transition: color 0.2s;
-    color: #444;
+    position: absolute; background: transparent; border: none;
+    cursor: pointer; padding: 4px 8px; font-size: 0.85rem;
+    transition: color 0.2s; color: #444;
   }
   #sound-btn { right: 16px; }
   #sound-btn.on { color: #4ade80; }
@@ -54,198 +40,195 @@
 
   /* ── Left: schedule ── */
   #schedule-panel {
-    width: 25%;
-    background: #111;
-    border-right: 1px solid #222;
-    padding: 20px 16px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+    width: 25%; background: #111; border-right: 1px solid #222;
+    padding: 20px 16px; overflow-y: auto; display: flex; flex-direction: column;
   }
   #schedule-panel h2 {
-    font-size: clamp(0.65rem, 1.5vw, 0.8rem);
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: #444;
-    margin-bottom: 16px;
-  }
-  .session-label {
-    font-size: clamp(0.6rem, 1.3vw, 0.72rem);
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #3a3a3a;
-    padding: 12px 8px 6px;
+    font-size: clamp(0.65rem, 1.5vw, 0.8rem); font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase; color: #444; margin-bottom: 16px;
   }
   .schedule-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 10px;
-    border-radius: 10px;
-    margin-bottom: 2px;
-    transition: background 0.35s;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px; border-radius: 10px; margin-bottom: 2px; transition: background 0.35s;
   }
   .schedule-item.active { background: rgba(74,222,128,0.1); }
   .schedule-item.done .task-name,
   .schedule-item.done .time-range { opacity: 0.28; text-decoration: line-through; text-decoration-color: #444; }
-  .dot {
-    width: 10px; height: 10px;
-    border-radius: 50%; flex-shrink: 0;
-    background: #252525; transition: background 0.3s;
-  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; background: #252525; transition: background 0.3s; }
   .dot.active { background: #4ade80; animation: glow 1.5s ease-in-out infinite; }
   @keyframes glow {
     0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.6); }
     50%      { box-shadow: 0 0 0 6px rgba(74,222,128,0); }
   }
   .schedule-item-text { flex: 1; min-width: 0; }
-  .time-range {
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    font-weight: 700; color: #bbb;
-    letter-spacing: 0.03em; margin-bottom: 4px; white-space: nowrap;
-  }
-  .task-name {
-    font-size: clamp(1rem, 2.4vw, 1.3rem);
-    color: #ccc; font-weight: 600;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;
-  }
-  .schedule-item.active .task-name { color: #4ade80; }
+  .time-range { font-size: clamp(0.9rem,2vw,1.1rem); font-weight: 700; color: #bbb; letter-spacing: 0.03em; margin-bottom: 4px; white-space: nowrap; }
+  .task-name  { font-size: clamp(1rem,2.4vw,1.3rem); color: #ccc; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+  .schedule-item.active .task-name  { color: #4ade80; }
   .schedule-item.active .time-range { color: #86efac; }
 
   /* ── Right ── */
   #current-panel {
-    width: 75%;
-    display: flex; flex-direction: column;
+    width: 75%; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     padding: 24px 32px; background: #0a0a0a;
   }
   #clock {
-    font-size: clamp(5rem, 19vw, 15rem);
-    font-weight: 800; letter-spacing: 0.03em;
+    font-size: clamp(5rem,19vw,15rem); font-weight: 800; letter-spacing: 0.03em;
     color: #e8d5a3; font-variant-numeric: tabular-nums;
     line-height: 1; margin-bottom: 20px; white-space: nowrap;
   }
   #progress-wrap { width: 88%; max-width: 600px; margin-bottom: 28px; }
-  #progress-labels {
-    display: flex; justify-content: space-between;
-    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
-    color: #4a4a4a; margin-bottom: 10px; letter-spacing: 0.05em;
-  }
+  #progress-labels { display: flex; justify-content: space-between; font-size: clamp(0.7rem,1.5vw,0.85rem); color: #4a4a4a; margin-bottom: 10px; letter-spacing: 0.05em; }
   #progress-bar-bg { width: 100%; height: 10px; background: #1e1e1e; border-radius: 5px; overflow: hidden; }
-  #progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #16a34a, #4ade80);
-    border-radius: 5px; transition: width 1s linear; width: 0%;
-  }
-  #time-remaining {
-    text-align: center; margin-top: 10px;
-    font-size: clamp(0.8rem, 1.8vw, 1rem);
-    color: #4a4a4a; letter-spacing: 0.08em; min-height: 1.4em;
-  }
-  #no-task { font-size: clamp(1rem, 3vw, 1.6rem); color: #333; letter-spacing: 0.14em; }
+  #progress-bar-fill { height: 100%; background: linear-gradient(90deg,#16a34a,#4ade80); border-radius: 5px; transition: width 1s linear; width: 0%; }
+  #time-remaining { text-align: center; margin-top: 10px; font-size: clamp(0.8rem,1.8vw,1rem); color: #4a4a4a; letter-spacing: 0.08em; min-height: 1.4em; }
+  #no-task { font-size: clamp(1rem,3vw,1.6rem); color: #333; letter-spacing: 0.14em; }
   #task-display { display: none; flex-direction: column; align-items: center; width: 100%; text-align: center; }
-  #task-label {
-    font-size: clamp(0.65rem, 1.4vw, 0.78rem); font-weight: 700;
-    letter-spacing: 0.28em; text-transform: uppercase;
-    color: #4ade80; margin-bottom: 10px;
-  }
-  #task-name-big {
-    font-size: clamp(3rem, 8vw, 6.5rem);
-    font-weight: 700; color: #f5f0e8;
-    letter-spacing: 0.04em; line-height: 1.05; margin-bottom: 12px;
-  }
-  #task-time-range { font-size: clamp(0.9rem, 2vw, 1.3rem); color: #666; letter-spacing: 0.1em; }
+  #task-label { font-size: clamp(0.65rem,1.4vw,0.78rem); font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: #4ade80; margin-bottom: 10px; }
+  #task-name-big { font-size: clamp(3rem,8vw,6.5rem); font-weight: 700; color: #f5f0e8; letter-spacing: 0.04em; line-height: 1.05; margin-bottom: 12px; }
+  #task-time-range { font-size: clamp(0.9rem,2vw,1.3rem); color: #666; letter-spacing: 0.1em; }
 
   /* ── Edit modal ── */
   #edit-modal {
-    display: none;
-    position: fixed; inset: 0; z-index: 100;
+    display: none; position: fixed; inset: 0; z-index: 100;
     background: rgba(0,0,0,0.85);
-    align-items: center; justify-content: center;
-    padding: 20px;
+    align-items: center; justify-content: center; padding: 20px;
   }
   #edit-modal.open { display: flex; }
   #edit-box {
-    background: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 16px;
-    padding: 28px 24px;
-    width: 100%; max-width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 16px;
+    background: #1a1a1a; border: 1px solid #333; border-radius: 16px;
+    padding: 28px 24px; width: 100%; max-width: 780px;
+    max-height: 90vh; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 14px;
   }
-  #edit-box h3 {
-    font-size: 1rem; font-weight: 700;
-    letter-spacing: 0.15em; color: #aaa;
-    text-transform: uppercase;
+  #edit-box h3 { font-size: 1rem; font-weight: 700; letter-spacing: 0.15em; color: #aaa; text-transform: uppercase; }
+
+  /* grid: # | name | date | start | end | dur | del */
+  .edit-row        { display: grid; grid-template-columns: 22px 1fr 110px 72px 72px 52px 34px; gap: 7px; align-items: center; }
+  .edit-row-header { display: grid; grid-template-columns: 22px 1fr 110px 72px 72px 52px 34px; gap: 7px;
+                     font-size: 0.63rem; letter-spacing: 0.12em; text-transform: uppercase; color: #444; padding: 0 2px 2px; }
+  .edit-num { font-size: 0.8rem; color: #444; text-align: center; font-weight: 600; }
+  .edit-row input[type="text"] {
+    background: #111; border: 1px solid #333; border-radius: 8px; color: #ddd;
+    font-size: 0.95rem; padding: 8px 10px; width: 100%; outline: none; font-family: inherit;
   }
-  .edit-row {
-    display: grid;
-    grid-template-columns: 24px 90px 90px 1fr 36px;
-    gap: 8px; align-items: center;
+  .edit-row input[type="text"]:focus { border-color: #555; }
+  .time-btn {
+    background: #111; border: 1px solid #333; border-radius: 8px;
+    color: #e8d5a3; font-size: 0.84rem; font-weight: 600;
+    padding: 9px 2px; cursor: pointer; width: 100%; font-family: inherit;
+    font-variant-numeric: tabular-nums; text-align: center;
+    transition: border-color 0.15s, background 0.1s;
   }
-  .edit-row-header {
-    display: grid;
-    grid-template-columns: 24px 90px 90px 1fr 36px;
-    gap: 8px;
-    font-size: 0.65rem; letter-spacing: 0.12em;
-    text-transform: uppercase; color: #444;
-    padding: 0 2px 4px;
+  .time-btn:hover { border-color: #555; background: #161616; }
+  .dur-input {
+    background: #111; border: 1px solid #333; border-radius: 8px; color: #aaa;
+    font-size: 0.84rem; padding: 9px 4px; width: 100%; outline: none;
+    font-family: inherit; text-align: center;
   }
-  .edit-num {
-    font-size: 0.8rem; color: #444; text-align: center; font-weight: 600;
+  .dur-input:focus { border-color: #555; color: #ddd; }
+  .date-btn {
+    background: #111; border: 1px solid #333; border-radius: 8px;
+    color: #88b4d8; font-size: 0.78rem; font-weight: 500;
+    padding: 6px 4px; cursor: pointer; width: 100%; font-family: inherit;
+    text-align: center; line-height: 1.5;
+    transition: border-color 0.15s, background 0.1s;
+    position: relative; overflow: hidden;
   }
-  .edit-row input, .edit-row select {
-    background: #111; border: 1px solid #333;
-    border-radius: 8px; color: #ddd;
-    font-size: 0.95rem; padding: 8px 10px;
-    width: 100%; outline: none;
-    font-family: inherit;
-  }
-  .edit-row input:focus, .edit-row select:focus { border-color: #555; }
-  .edit-row select { cursor: pointer; }
+  .date-btn:hover { border-color: #555; background: #161616; }
+  .date-btn .date-ymd { display: block; }
+  .date-btn .date-wd  { display: block; font-size: 0.7rem; color: #5a8ab0; }
   .del-btn {
-    background: transparent; border: 1px solid #2a2a2a;
-    border-radius: 8px; color: #555;
-    font-size: 1rem; cursor: pointer;
-    padding: 6px; line-height: 1;
-    transition: all 0.15s;
+    background: transparent; border: 1px solid #2a2a2a; border-radius: 8px; color: #555;
+    font-size: 1rem; cursor: pointer; padding: 6px; line-height: 1; transition: all 0.15s;
   }
   .del-btn:hover { border-color: #e55; color: #e55; }
   #add-btn {
-    align-self: flex-start;
-    background: #1e1e1e; border: 1px dashed #333;
-    border-radius: 8px; color: #555;
-    font-size: 0.85rem; letter-spacing: 0.1em;
-    padding: 10px 18px; cursor: pointer;
-    transition: all 0.15s;
+    align-self: flex-start; background: #1e1e1e; border: 1px dashed #333;
+    border-radius: 8px; color: #555; font-size: 0.85rem; letter-spacing: 0.1em;
+    padding: 10px 18px; cursor: pointer; transition: all 0.15s;
   }
   #add-btn:hover { border-color: #555; color: #aaa; }
   .edit-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
-  .btn-reset {
-    background: transparent; border: 1px solid #333;
-    border-radius: 8px; color: #666;
-    font-size: 0.9rem; padding: 10px 20px; cursor: pointer;
-    margin-right: auto;
-    transition: all 0.15s;
-  }
+  .btn-reset  { background: transparent; border: 1px solid #333; border-radius: 8px; color: #666; font-size: 0.9rem; padding: 10px 20px; cursor: pointer; margin-right: auto; transition: all 0.15s; }
   .btn-reset:hover { border-color: #e8a; color: #e8a; }
-  .btn-cancel {
-    background: transparent; border: 1px solid #333;
-    border-radius: 8px; color: #666;
-    font-size: 0.9rem; padding: 10px 20px; cursor: pointer;
-  }
-  .btn-save {
-    background: #4ade80; border: none;
-    border-radius: 8px; color: #0a0a0a;
-    font-size: 0.9rem; font-weight: 700;
-    padding: 10px 24px; cursor: pointer;
-    transition: background 0.15s;
-  }
+  .btn-cancel { background: transparent; border: 1px solid #333; border-radius: 8px; color: #666; font-size: 0.9rem; padding: 10px 20px; cursor: pointer; }
+  .btn-save   { background: #4ade80; border: none; border-radius: 8px; color: #0a0a0a; font-size: 0.9rem; font-weight: 700; padding: 10px 24px; cursor: pointer; transition: background 0.15s; }
   .btn-save:hover { background: #86efac; }
+
+  /* ── Wheel Picker (iPhone Clock style) ── */
+  #wheel-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.5);
+    align-items: flex-end; justify-content: center;
+  }
+  #wheel-overlay.open { display: flex; }
+  #wheel-panel {
+    background: #1c1c1e; border-radius: 18px 18px 0 0;
+    width: 100%; max-width: 480px;
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+    box-shadow: 0 -12px 48px rgba(0,0,0,0.7);
+  }
+  #wheel-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 20px; border-bottom: 1px solid #2c2c2e;
+  }
+  #wheel-toolbar span { color: #777; font-size: 0.82rem; letter-spacing: 0.14em; text-transform: uppercase; }
+  .wheel-tb-btn { background: none; border: none; font-size: 1rem; cursor: pointer; padding: 4px 10px; font-family: inherit; border-radius: 6px; }
+  #wheel-cancel-btn  { color: #555; }
+  #wheel-confirm-btn { color: #4ade80; font-weight: 700; }
+
+  #wheel-body {
+    display: flex; align-items: center; justify-content: center;
+    height: 216px; position: relative; gap: 0;
+    user-select: none; -webkit-user-select: none;
+  }
+
+  /* iPhone-style selection band */
+  #wheel-body::before {
+    content: '';
+    position: absolute; left: 50%; transform: translateX(-50%);
+    width: 160px; top: calc(50% - 22px); height: 44px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    pointer-events: none; z-index: 1;
+  }
+
+  /* top/bottom gradient fade — strong, covers 3 items on each side */
+  #wheel-body::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom,
+      #1c1c1e 0%,
+      #1c1c1e 14%,
+      rgba(28,28,30,0.75) 28%,
+      rgba(28,28,30,0) 42%,
+      rgba(28,28,30,0) 58%,
+      rgba(28,28,30,0.75) 72%,
+      #1c1c1e 86%,
+      #1c1c1e 100%);
+    pointer-events: none; z-index: 2;
+  }
+
+  .wheel-col {
+    width: 88px; height: 216px;
+    overflow-y: scroll; scroll-snap-type: y mandatory;
+    -ms-overflow-style: none; scrollbar-width: none;
+  }
+  .wheel-col::-webkit-scrollbar { display: none; }
+  .wheel-pad  { height: 86px; flex-shrink: 0; }
+  .wheel-item {
+    height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    scroll-snap-align: center;
+    font-size: 2rem; font-weight: 400;
+    color: #fff; font-variant-numeric: tabular-nums;
+  }
+  .wheel-sep {
+    font-size: 2.2rem; font-weight: 500; color: #555;
+    padding: 0 2px; margin-top: -8px;
+    position: relative; z-index: 3; pointer-events: none;
+  }
 
   /* Scrollbar */
   #schedule-panel::-webkit-scrollbar { width: 3px; }
@@ -261,7 +244,11 @@
     .task-name  { font-size: clamp(1.15rem, 5vw, 1.6rem); }
     .time-range { font-size: clamp(0.8rem, 3.5vw, 1rem); }
     #clock      { font-size: clamp(4.5rem, 22vw, 10rem); margin-bottom: 14px; }
-    .edit-row, .edit-row-header { grid-template-columns: 20px 80px 80px 1fr 32px; }
+    .edit-row, .edit-row-header { grid-template-columns: 18px 1fr 90px 58px 58px 42px 28px; gap: 5px; }
+    .time-btn   { font-size: 0.76rem; }
+    .dur-input  { font-size: 0.76rem; }
+    .date-btn   { font-size: 0.72rem; }
+    .date-btn .date-wd { font-size: 0.66rem; }
   }
 </style>
 </head>
@@ -299,14 +286,30 @@
   <div id="edit-box">
     <h3>編輯任務</h3>
     <div class="edit-row-header">
-      <span>#</span><span>開始時間</span><span>結束時間</span><span>任務名稱</span><span></span>
+      <span>#</span><span>任務名稱</span><span>日期</span><span>開始</span><span>結束</span><span style="text-align:center">時長(分)</span><span></span>
     </div>
     <div id="edit-rows"></div>
     <button id="add-btn" onclick="addRow()">＋ 新增任務</button>
     <div class="edit-actions">
-      <button class="btn-reset" onclick="resetEdit()">↺ 重設預設</button>
+      <button class="btn-reset"  onclick="resetEdit()">↺ 重設</button>
       <button class="btn-cancel" onclick="closeEdit()">取消</button>
-      <button class="btn-save" onclick="saveEdit()">儲存</button>
+      <button class="btn-save"   onclick="saveEdit()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Wheel Picker -->
+<div id="wheel-overlay">
+  <div id="wheel-panel">
+    <div id="wheel-toolbar">
+      <button class="wheel-tb-btn" id="wheel-cancel-btn"  onclick="closeWheel()">取消</button>
+      <span>選擇時間</span>
+      <button class="wheel-tb-btn" id="wheel-confirm-btn" onclick="confirmWheel()">確定</button>
+    </div>
+    <div id="wheel-body">
+      <div class="wheel-col" id="wh-hour"></div>
+      <div class="wheel-sep">:</div>
+      <div class="wheel-col" id="wh-min"></div>
     </div>
   </div>
 </div>
@@ -321,47 +324,64 @@
     { start: '12:05', end: '12:10', name: '蓮花手印' },
   ];
 
-  // Load from localStorage or use default
-  let schedule = JSON.parse(localStorage.getItem('schedule') || 'null') || DEFAULT;
+  let schedule;
+  try {
+    const stored = JSON.parse(localStorage.getItem('schedule'));
+    schedule = (Array.isArray(stored) && (stored.length === 0 || (stored[0].start && stored[0].end && stored[0].name)))
+      ? stored : DEFAULT;
+  } catch(e) { schedule = DEFAULT; }
 
   const weekdays = ['日','一','二','三','四','五','六'];
 
-  function toSec(t) {
-    const [h, m] = t.split(':').map(Number);
-    return (h * 60 + m) * 60;
+  function todayISO() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
-  function fmt(t) {
-    const [h, m] = t.split(':').map(Number);
-    return `${h % 12 || 12}:${String(m).padStart(2,'0')}${h >= 12 ? 'pm' : 'am'}`;
+  function setDateBtn(btn, iso) {
+    if (!iso) return;
+    const [y,m,d] = iso.split('-').map(Number);
+    const wd = new Date(y, m-1, d).getDay();
+    btn.querySelector('.date-ymd').textContent = `${y}/${String(m).padStart(2,'0')}/${String(d).padStart(2,'0')}`;
+    btn.querySelector('.date-wd').textContent  = `週${weekdays[wd]}`;
+    btn.dataset.value = iso;
   }
+
+  function toSec(t) { const [h,m] = t.split(':').map(Number); return (h*60+m)*60; }
+  function fmt(t)   { const [h,m] = t.split(':').map(Number); return `${h%12||12}:${String(m).padStart(2,'0')}${h>=12?'pm':'am'}`; }
   function fmtRemain(s) {
     if (s <= 0) return '完成';
-    const m = Math.floor(s / 60), r = s % 60;
+    const m = Math.floor(s/60), r = s%60;
     return m > 0 ? `剩餘 ${m} 分 ${r} 秒` : `剩餘 ${r} 秒`;
+  }
+  function timeToMin(t) {
+    if (!t || !t.includes(':')) return 0;
+    const [h,m] = t.split(':').map(Number); return h*60+m;
+  }
+  function addMinutes(t, delta) {
+    const total = ((timeToMin(t) + delta) % 1440 + 1440) % 1440;
+    return `${String(Math.floor(total/60)).padStart(2,'0')}:${String(total%60).padStart(2,'0')}`;
   }
 
   // ── Build left panel ──
   function buildList() {
-    const listEl = document.getElementById('schedule-list');
-    listEl.innerHTML = '';
+    const el = document.getElementById('schedule-list');
+    el.innerHTML = '';
     schedule.forEach((item, i) => {
       const row = document.createElement('div');
-      row.className = 'schedule-item';
-      row.id = `item-${i}`;
+      row.className = 'schedule-item'; row.id = `item-${i}`;
       row.innerHTML = `
         <div class="dot" id="dot-${i}"></div>
         <div class="schedule-item-text">
           <div class="time-range">${fmt(item.start)} – ${fmt(item.end)}</div>
-          <div class="task-name">${i + 1}. ${item.name}</div>
+          <div class="task-name">${i+1}. ${item.name}</div>
         </div>`;
-      listEl.appendChild(row);
+      el.appendChild(row);
     });
   }
   buildList();
 
   // ── Tick ──
   let lastActiveIdx = -2;
-
   function tick() {
     const now = new Date();
     document.getElementById('clock').textContent =
@@ -369,20 +389,35 @@
     document.getElementById('date-display').textContent =
       `${now.getFullYear()} 年 ${now.getMonth()+1} 月 ${now.getDate()} 日　星期${weekdays[now.getDay()]}`;
 
-    const now_s = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
+    const now_s   = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
+    const todayStr = todayISO();
+
+    // returns 'active' | 'done' | 'upcoming' for each task
+    function taskState(item) {
+      const d = item.date || todayStr;
+      const crossMid = toSec(item.end) < toSec(item.start); // spans midnight
+      if (d < todayStr) return 'done';
+      if (d > todayStr) return 'upcoming';
+      // d === today
+      if (crossMid) {
+        return now_s >= toSec(item.start) ? 'active' : 'upcoming';
+      }
+      if (now_s >= toSec(item.start) && now_s < toSec(item.end)) return 'active';
+      if (now_s >= toSec(item.end)) return 'done';
+      return 'upcoming';
+    }
+
     let activeIdx = -1;
-    schedule.forEach((item, i) => {
-      if (now_s >= toSec(item.start) && now_s < toSec(item.end)) activeIdx = i;
-    });
+    schedule.forEach((item, i) => { if (taskState(item) === 'active') activeIdx = i; });
 
     schedule.forEach((item, i) => {
       const row = document.getElementById(`item-${i}`);
       const dot = document.getElementById(`dot-${i}`);
       if (!row) return;
-      row.classList.remove('active','done');
-      dot.classList.remove('active');
-      if (i === activeIdx)              { row.classList.add('active'); dot.classList.add('active'); }
-      else if (now_s >= toSec(item.end)) row.classList.add('done');
+      row.classList.remove('active','done'); dot.classList.remove('active');
+      const st = taskState(item);
+      if (st === 'active') { row.classList.add('active'); dot.classList.add('active'); }
+      else if (st === 'done') row.classList.add('done');
     });
 
     if (lastActiveIdx !== -2 && activeIdx !== lastActiveIdx && activeIdx !== -1) playBell();
@@ -390,38 +425,33 @@
 
     const noTask   = document.getElementById('no-task');
     const taskDisp = document.getElementById('task-display');
-
     if (activeIdx === -1) {
-      taskDisp.style.display = 'none';
-      noTask.style.display   = '';
+      taskDisp.style.display = 'none'; noTask.style.display = '';
+      if (schedule.length === 0) { noTask.textContent = '尚無任務'; return; }
       const first = toSec(schedule[0].start), last = toSec(schedule[schedule.length-1].end);
       noTask.textContent = now_s < first ? '任務尚未開始' : now_s >= last ? '任務已結束' : '休息中';
-      document.getElementById('prog-start').textContent        = '';
-      document.getElementById('prog-end').textContent          = '';
+      document.getElementById('prog-start').textContent = '';
+      document.getElementById('prog-end').textContent   = '';
       document.getElementById('progress-bar-fill').style.width = '0%';
       document.getElementById('time-remaining').textContent    = '';
     } else {
-      noTask.style.display   = 'none';
-      taskDisp.style.display = 'flex';
+      noTask.style.display = 'none'; taskDisp.style.display = 'flex';
       const item = schedule[activeIdx];
       const s = toSec(item.start), e = toSec(item.end);
-      document.getElementById('task-name-big').textContent     = item.name;
-      document.getElementById('task-time-range').textContent   = `${fmt(item.start)} – ${fmt(item.end)}`;
-      document.getElementById('prog-start').textContent        = fmt(item.start);
-      document.getElementById('prog-end').textContent          = fmt(item.end);
+      document.getElementById('task-name-big').textContent   = item.name;
+      document.getElementById('task-time-range').textContent = `${fmt(item.start)} – ${fmt(item.end)}`;
+      document.getElementById('prog-start').textContent      = fmt(item.start);
+      document.getElementById('prog-end').textContent        = fmt(item.end);
       document.getElementById('progress-bar-fill').style.width = Math.min(100,(now_s-s)/(e-s)*100) + '%';
       document.getElementById('time-remaining').textContent    = fmtRemain(e - now_s);
     }
   }
-
-  tick();
-  setInterval(tick, 1000);
+  tick(); setInterval(tick, 1000);
 
   // ── Audio ──
   const bellAudio = new Audio('bell.wav');
   bellAudio.preload = 'auto';
   let soundOn = false;
-
   function toggleSound() {
     soundOn = !soundOn;
     const btn = document.getElementById('sound-btn');
@@ -431,65 +461,156 @@
   }
   function playBell() {
     if (!soundOn) return;
-    bellAudio.currentTime = 0;
-    bellAudio.play().catch(()=>{});
+    bellAudio.currentTime = 0; bellAudio.play().catch(()=>{});
   }
+
+  // ── Wheel Picker ──
+  const ITEM_H = 44;
+
+  // Build wheel items
+  (function() {
+    function pad() { const d = document.createElement('div'); d.className = 'wheel-pad'; return d; }
+    function item(v) { const d = document.createElement('div'); d.className = 'wheel-item'; d.textContent = String(v).padStart(2,'0'); return d; }
+    const hc = document.getElementById('wh-hour');
+    const mc = document.getElementById('wh-min');
+    hc.appendChild(pad());
+    for (let h = 0; h < 24; h++) hc.appendChild(item(h));
+    hc.appendChild(pad());
+    mc.appendChild(pad());
+    for (let m = 0; m < 60; m++) mc.appendChild(item(m));
+    mc.appendChild(pad());
+  })();
+
+  const hourCol = document.getElementById('wh-hour');
+  const minCol  = document.getElementById('wh-min');
+
+  let wheelTarget = null;
+
+  function openWheel(row, field) {
+    wheelTarget = { row, field };
+    const btn = field === 'start' ? row.querySelector('.time-start-btn') : row.querySelector('.time-end-btn');
+    const [h, m] = (btn.dataset.value || '09:00').split(':').map(Number);
+    hourCol.scrollTop = h * ITEM_H;
+    minCol.scrollTop  = m * ITEM_H;
+    document.getElementById('wheel-overlay').classList.add('open');
+  }
+
+  function confirmWheel() {
+    if (!wheelTarget) return;
+    const { row, field } = wheelTarget;
+    const h   = Math.min(23, Math.round(hourCol.scrollTop / ITEM_H));
+    const m   = Math.min(59, Math.round(minCol.scrollTop  / ITEM_H));
+    const val = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+
+    const startBtn = row.querySelector('.time-start-btn');
+    const endBtn   = row.querySelector('.time-end-btn');
+    const durInput = row.querySelector('.dur-input');
+
+    if (field === 'start') {
+      // Keep duration, recalculate end
+      const dur = parseInt(durInput.value) || 0;
+      startBtn.dataset.value = val; startBtn.textContent = val;
+      const newEnd = addMinutes(val, dur);
+      endBtn.dataset.value = newEnd; endBtn.textContent = newEnd;
+    } else {
+      // Keep start, recalculate duration (handle cross-midnight)
+      endBtn.dataset.value = val; endBtn.textContent = val;
+      let dur = timeToMin(val) - timeToMin(startBtn.dataset.value);
+      if (dur < 0) dur += 1440;
+      durInput.value = dur;
+    }
+    closeWheel();
+  }
+
+  function closeWheel() {
+    document.getElementById('wheel-overlay').classList.remove('open');
+    wheelTarget = null;
+  }
+  document.getElementById('wheel-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeWheel(); });
 
   // ── Edit panel ──
-  function openEdit() {
-    const container = document.getElementById('edit-rows');
-    container.innerHTML = '';
-    schedule.forEach((item, i) => addRow(item));
-    document.getElementById('edit-modal').classList.add('open');
+  function reNumber() {
+    document.querySelectorAll('#edit-rows .edit-row').forEach((r,i) => r.querySelector('.edit-num').textContent = i+1);
   }
 
-  function closeEdit() {
-    document.getElementById('edit-modal').classList.remove('open');
-  }
-
-  function addRow(item) {
-    item = item || { start: '09:00', end: '10:00', name: '' };
+  function addRowData(name, startTime, endTime, date) {
     const container = document.getElementById('edit-rows');
-    const num = container.children.length + 1;
+    let dur = timeToMin(endTime) - timeToMin(startTime);
+    if (dur < 0) dur += 1440; // cross-midnight
+    date = date || todayISO();
     const row = document.createElement('div');
     row.className = 'edit-row';
     row.innerHTML = `
-      <div class="edit-num">${num}</div>
-      <input type="time" value="${item.start}">
-      <input type="time" value="${item.end}">
-      <input type="text" value="${item.name}" placeholder="任務名稱">
-      <button class="del-btn" onclick="removeRow(this)">✕</button>
-    `;
+      <div class="edit-num">${container.children.length + 1}</div>
+      <input type="text" placeholder="任務名稱">
+      <button class="date-btn" type="button">
+        <span class="date-ymd"></span>
+        <span class="date-wd"></span>
+      </button>
+      <button class="time-btn time-start-btn" data-value="${startTime}">${startTime}</button>
+      <button class="time-btn time-end-btn"   data-value="${endTime}">${endTime}</button>
+      <input  class="dur-input" type="number" value="${dur}" min="0" max="1439">
+      <button class="del-btn" onclick="removeRow(this)">✕</button>`;
+    row.querySelector('input[type="text"]').value = name;
+    setDateBtn(row.querySelector('.date-btn'), date);
+
+    // Hidden native date input — on iOS opens system wheel picker
+    const dateInput = document.createElement('input');
+    dateInput.type = 'date'; dateInput.value = date;
+    dateInput.style.cssText = 'position:absolute;opacity:0;width:0;height:0;pointer-events:none;';
+    row.querySelector('.date-btn').appendChild(dateInput);
+    row.querySelector('.date-btn').addEventListener('click', () => {
+      try { dateInput.showPicker(); } catch(e) { dateInput.click(); }
+    });
+    dateInput.addEventListener('change', () => setDateBtn(row.querySelector('.date-btn'), dateInput.value));
+
+    row.querySelector('.time-start-btn').addEventListener('click', () => openWheel(row, 'start'));
+    row.querySelector('.time-end-btn').addEventListener(  'click', () => openWheel(row, 'end'));
+    row.querySelector('.dur-input').addEventListener('input', () => {
+      const d   = parseInt(row.querySelector('.dur-input').value) || 0;
+      const st  = row.querySelector('.time-start-btn').dataset.value;
+      const end = addMinutes(st, d);
+      row.querySelector('.time-end-btn').dataset.value = end;
+      row.querySelector('.time-end-btn').textContent   = end;
+    });
     container.appendChild(row);
   }
 
-  function removeRow(btn) {
-    btn.closest('.edit-row').remove();
-    document.querySelectorAll('#edit-rows .edit-row').forEach((r, i) => {
-      r.querySelector('.edit-num').textContent = i + 1;
-    });
+  function addRow() {
+    const rows = document.querySelectorAll('#edit-rows .edit-row');
+    const startTime = rows.length > 0
+      ? (rows[rows.length-1].querySelector('.time-end-btn').dataset.value || '09:00')
+      : '09:00';
+    addRowData('', startTime, addMinutes(startTime, 30));
   }
 
+  function removeRow(btn) { btn.closest('.edit-row').remove(); reNumber(); }
+
+  function loadEditRows(src) {
+    document.getElementById('edit-rows').innerHTML = '';
+    src.forEach(item => addRowData(item.name, item.start, item.end, item.date));
+  }
+
+  function openEdit()  { loadEditRows(schedule); document.getElementById('edit-modal').classList.add('open'); }
+  function closeEdit() { document.getElementById('edit-modal').classList.remove('open'); }
+
   function resetEdit() {
-    if (!confirm('確定要重設為預設時間表？')) return;
-    localStorage.removeItem('schedule');
-    schedule = JSON.parse(JSON.stringify(DEFAULT));
+    schedule = [];
+    localStorage.setItem('schedule', '[]');
     lastActiveIdx = -2;
     buildList();
-    closeEdit();
+    document.getElementById('edit-rows').innerHTML = '';
   }
 
   function saveEdit() {
-    const rows = document.querySelectorAll('#edit-rows .edit-row');
     const newSchedule = [];
-    rows.forEach(row => {
-      const inputs = row.querySelectorAll('input[type="time"], input[type="text"]');
-      const start = inputs[0].value;
-      const end   = inputs[1].value;
-      const name  = inputs[2].value.trim();
-      if (start && end && name) newSchedule.push({ start, end, name });
+    document.querySelectorAll('#edit-rows .edit-row').forEach(row => {
+      const name  = row.querySelector('input[type="text"]').value.trim();
+      const start = row.querySelector('.time-start-btn').dataset.value;
+      const end   = row.querySelector('.time-end-btn').dataset.value;
+      const date  = row.querySelector('.date-btn').dataset.value || todayISO();
+      if (name && start && end) newSchedule.push({ date, start, end, name });
     });
-    if (newSchedule.length === 0) return;
     schedule = newSchedule;
     localStorage.setItem('schedule', JSON.stringify(schedule));
     lastActiveIdx = -2;
