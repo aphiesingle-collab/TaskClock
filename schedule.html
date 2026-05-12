@@ -1,282 +1,388 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TaskClock</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080808">
+<link rel="manifest" href="manifest.json">
+<title>TaskClock — Keep Every Moment on Track</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
+  :root {
+    --bg:       #080808;
+    --surface:  #111111;
+    --surface2: #191919;
+    --border:   #222222;
+    --border2:  #2e2e2e;
+    --accent:   #22c55e;
+    --accent2:  #16a34a;
+    --accent-dim: rgba(34,197,94,0.12);
+    --text:     #f0f0f0;
+    --text2:    #888888;
+    --text3:    #444444;
+    --clock:    #fbbf24;
+    --clock2:   #f59e0b;
+    --radius:   12px;
+    --radius2:  18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
   body {
-    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
-    background: #0a0a0a;
-    color: #f0ece0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg); color: var(--text);
+    display: flex; flex-direction: column; overflow: hidden;
   }
 
-  /* ── Top date bar ── */
-  #date-bar {
-    display: flex; align-items: center; justify-content: center;
-    padding: 12px 16px;
-    background: #141414; border-bottom: 1px solid #252525;
-    flex-shrink: 0; position: relative;
+  /* ── Header ── */
+  #header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px; height: 52px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    flex-shrink: 0; position: relative; z-index: 10;
   }
-  #date-display { font-size: clamp(0.9rem, 2vw, 1.2rem); font-weight: 400; letter-spacing: 0.2em; color: #888; }
-  .top-btn {
-    position: absolute; background: transparent; border: none;
-    cursor: pointer; padding: 4px 8px; font-size: 0.85rem;
-    transition: color 0.2s; color: #444;
+  #header-left  { display: flex; align-items: center; gap: 6px; }
+  #header-right { display: flex; align-items: center; gap: 6px; }
+  #date-display {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    font-size: clamp(0.72rem, 1.8vw, 0.9rem);
+    font-weight: 500; letter-spacing: 0.04em; color: var(--text2);
+    white-space: nowrap; pointer-events: none;
   }
-  #sound-btn { right: 16px; }
-  #sound-btn.on { color: #4ade80; }
-  #edit-btn { left: 16px; color: #555; }
-  #edit-btn:hover { color: #aaa; }
+  .hdr-btn {
+    background: transparent; border: 1px solid var(--border2);
+    border-radius: 8px; color: var(--text3);
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em;
+    padding: 5px 10px; cursor: pointer; font-family: inherit;
+    transition: color .15s, border-color .15s;
+  }
+  .hdr-btn:hover { color: var(--text2); border-color: #444; }
+  #sound-btn.on { color: var(--accent); border-color: var(--accent); }
+  #lang-btn { min-width: 38px; text-align: center; }
 
-  /* ── Main layout ── */
+  /* ── Main ── */
   #main { display: flex; flex: 1; overflow: hidden; }
 
-  /* ── Left: schedule ── */
+  /* ── Left panel ── */
   #schedule-panel {
-    width: 25%; background: #111; border-right: 1px solid #222;
-    padding: 20px 16px; overflow-y: auto; display: flex; flex-direction: column;
+    width: 26%; background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 14px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 2px;
   }
   #schedule-panel h2 {
-    font-size: clamp(0.65rem, 1.5vw, 0.8rem); font-weight: 700;
-    letter-spacing: 0.22em; text-transform: uppercase; color: #444; margin-bottom: 16px;
+    font-size: 0.6rem; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 14px; padding-left: 2px;
+  }
+  .date-group-label {
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text3);
+    padding: 12px 4px 6px; margin-top: 4px;
   }
   .schedule-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px; border-radius: 10px; margin-bottom: 2px; transition: background 0.35s;
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: 10px;
+    transition: background .3s;
   }
-  .schedule-item.active { background: rgba(74,222,128,0.1); }
-  .schedule-item.done .task-name,
-  .schedule-item.done .time-range { opacity: 0.28; text-decoration: line-through; text-decoration-color: #444; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; background: #252525; transition: background 0.3s; }
-  .dot.active { background: #4ade80; animation: glow 1.5s ease-in-out infinite; }
-  @keyframes glow {
-    0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.6); }
-    50%      { box-shadow: 0 0 0 6px rgba(74,222,128,0); }
+  .schedule-item.active { background: var(--accent-dim); }
+  .schedule-item.done .item-time,
+  .schedule-item.done .item-name {
+    opacity: 0.25; text-decoration: line-through; text-decoration-color: var(--text3);
   }
-  .schedule-item-text { flex: 1; min-width: 0; }
-  .time-range { font-size: clamp(0.9rem,2vw,1.1rem); font-weight: 700; color: #bbb; letter-spacing: 0.03em; margin-bottom: 4px; white-space: nowrap; }
-  .task-name  { font-size: clamp(1rem,2.4vw,1.3rem); color: #ccc; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
-  .schedule-item.active .task-name  { color: #4ade80; }
-  .schedule-item.active .time-range { color: #86efac; }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border2); flex-shrink: 0; transition: background .3s;
+  }
+  .dot.active { background: var(--accent); animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,.7); }
+    50%      { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+  }
+  .item-text { flex: 1; min-width: 0; }
+  .item-time {
+    font-size: clamp(0.72rem, 1.6vw, 0.88rem); font-weight: 600;
+    color: #666; letter-spacing: 0.02em; margin-bottom: 2px; white-space: nowrap;
+  }
+  .item-name {
+    font-size: clamp(0.85rem, 2vw, 1.05rem); font-weight: 600; color: #bbb;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .schedule-item.active .item-time { color: rgba(34,197,94,.7); }
+  .schedule-item.active .item-name { color: var(--accent); }
 
-  /* ── Right ── */
+  /* ── Right panel ── */
   #current-panel {
-    width: 75%; display: flex; flex-direction: column;
+    flex: 1; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    padding: 24px 32px; background: #0a0a0a;
+    padding: 28px 32px; gap: 0; background: var(--bg);
+    position: relative;
+  }
+  #app-label {
+    position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--text3);
   }
   #clock {
-    font-size: clamp(5rem,19vw,15rem); font-weight: 800; letter-spacing: 0.03em;
-    color: #e8d5a3; font-variant-numeric: tabular-nums;
-    line-height: 1; margin-bottom: 20px; white-space: nowrap;
+    font-size: clamp(5rem, 20vw, 15rem);
+    font-weight: 800; letter-spacing: -0.02em;
+    color: var(--clock); font-variant-numeric: tabular-nums;
+    line-height: 0.9; margin-bottom: 28px; white-space: nowrap;
+    text-shadow: 0 0 60px rgba(251,191,36,.15);
   }
-  #progress-wrap { width: 88%; max-width: 600px; margin-bottom: 28px; }
-  #progress-labels { display: flex; justify-content: space-between; font-size: clamp(0.7rem,1.5vw,0.85rem); color: #4a4a4a; margin-bottom: 10px; letter-spacing: 0.05em; }
-  #progress-bar-bg { width: 100%; height: 10px; background: #1e1e1e; border-radius: 5px; overflow: hidden; }
-  #progress-bar-fill { height: 100%; background: linear-gradient(90deg,#16a34a,#4ade80); border-radius: 5px; transition: width 1s linear; width: 0%; }
-  #time-remaining { text-align: center; margin-top: 10px; font-size: clamp(0.8rem,1.8vw,1rem); color: #4a4a4a; letter-spacing: 0.08em; min-height: 1.4em; }
-  #no-task { font-size: clamp(1rem,3vw,1.6rem); color: #333; letter-spacing: 0.14em; }
-  #task-display { display: none; flex-direction: column; align-items: center; width: 100%; text-align: center; }
-  #task-label { font-size: clamp(0.65rem,1.4vw,0.78rem); font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: #4ade80; margin-bottom: 10px; }
-  #task-name-big { font-size: clamp(3rem,8vw,6.5rem); font-weight: 700; color: #f5f0e8; letter-spacing: 0.04em; line-height: 1.05; margin-bottom: 12px; }
-  #task-time-range { font-size: clamp(0.9rem,2vw,1.3rem); color: #666; letter-spacing: 0.1em; }
+  #no-task {
+    font-size: clamp(0.9rem, 2.5vw, 1.4rem);
+    color: var(--text3); letter-spacing: 0.1em; font-weight: 500;
+  }
+  #task-display {
+    display: none; flex-direction: column; align-items: center;
+    width: 100%; text-align: center;
+  }
+  #task-label {
+    font-size: clamp(0.6rem, 1.2vw, 0.72rem); font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  #task-name-big {
+    font-size: clamp(2.4rem, 7vw, 6rem);
+    font-weight: 700; color: var(--text);
+    letter-spacing: -0.01em; line-height: 1.05; margin-bottom: 10px;
+  }
+  #task-time-range { font-size: clamp(0.8rem, 1.8vw, 1.1rem); color: var(--text3); letter-spacing: 0.08em; }
+  #progress-wrap { width: min(85%, 560px); margin: 22px 0 8px; }
+  #progress-labels {
+    display: flex; justify-content: space-between;
+    font-size: clamp(0.65rem, 1.3vw, 0.78rem);
+    color: var(--text3); margin-bottom: 8px; letter-spacing: 0.04em;
+  }
+  #progress-bar-bg {
+    width: 100%; height: 6px; background: var(--surface2);
+    border-radius: 3px; overflow: hidden;
+  }
+  #progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 3px; transition: width 1s linear; width: 0%;
+  }
+  #time-remaining {
+    text-align: center; margin-top: 10px;
+    font-size: clamp(0.72rem, 1.5vw, 0.88rem);
+    color: var(--text3); letter-spacing: 0.06em; min-height: 1.4em;
+  }
 
   /* ── Edit modal ── */
   #edit-modal {
     display: none; position: fixed; inset: 0; z-index: 100;
-    background: rgba(0,0,0,0.85);
-    align-items: center; justify-content: center; padding: 20px;
+    background: rgba(0,0,0,.88);
+    align-items: center; justify-content: center; padding: 16px;
   }
   #edit-modal.open { display: flex; }
   #edit-box {
-    background: #1a1a1a; border: 1px solid #333; border-radius: 16px;
-    padding: 28px 24px; width: 100%; max-width: 780px;
-    max-height: 90vh; overflow-y: auto;
-    display: flex; flex-direction: column; gap: 14px;
+    background: #141414; border: 1px solid var(--border2);
+    border-radius: var(--radius2); padding: 24px 20px;
+    width: 100%; max-width: 800px; max-height: 92vh;
+    overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
   }
-  #edit-box h3 { font-size: 1rem; font-weight: 700; letter-spacing: 0.15em; color: #aaa; text-transform: uppercase; }
-
+  #edit-box h3 {
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.18em;
+    color: var(--text2); text-transform: uppercase;
+  }
   /* grid: # | name | date | start | end | dur | del */
-  .edit-row        { display: grid; grid-template-columns: 22px 1fr 110px 72px 72px 52px 34px; gap: 7px; align-items: center; }
-  .edit-row-header { display: grid; grid-template-columns: 22px 1fr 110px 72px 72px 52px 34px; gap: 7px;
-                     font-size: 0.63rem; letter-spacing: 0.12em; text-transform: uppercase; color: #444; padding: 0 2px 2px; }
-  .edit-num { font-size: 0.8rem; color: #444; text-align: center; font-weight: 600; }
+  .edit-row {
+    display: grid;
+    grid-template-columns: 20px 1fr 108px 70px 70px 50px 32px;
+    gap: 6px; align-items: center;
+  }
+  .edit-row-header {
+    display: grid;
+    grid-template-columns: 20px 1fr 108px 70px 70px 50px 32px;
+    gap: 6px;
+    font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text3); padding: 0 2px 2px;
+  }
+  .edit-num { font-size: 0.75rem; color: var(--text3); text-align: center; font-weight: 600; }
   .edit-row input[type="text"] {
-    background: #111; border: 1px solid #333; border-radius: 8px; color: #ddd;
-    font-size: 0.95rem; padding: 8px 10px; width: 100%; outline: none; font-family: inherit;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-size: 0.9rem; padding: 8px 10px; width: 100%;
+    outline: none; font-family: inherit;
   }
-  .edit-row input[type="text"]:focus { border-color: #555; }
-  .time-btn {
-    background: #111; border: 1px solid #333; border-radius: 8px;
-    color: #e8d5a3; font-size: 0.84rem; font-weight: 600;
-    padding: 9px 2px; cursor: pointer; width: 100%; font-family: inherit;
-    font-variant-numeric: tabular-nums; text-align: center;
-    transition: border-color 0.15s, background 0.1s;
-  }
-  .time-btn:hover { border-color: #555; background: #161616; }
-  .dur-input {
-    background: #111; border: 1px solid #333; border-radius: 8px; color: #aaa;
-    font-size: 0.84rem; padding: 9px 4px; width: 100%; outline: none;
+  .edit-row input[type="text"]:focus { border-color: #444; }
+  .time-btn, .date-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; cursor: pointer; width: 100%;
     font-family: inherit; text-align: center;
+    transition: border-color .15s, background .1s;
   }
-  .dur-input:focus { border-color: #555; color: #ddd; }
+  .time-btn {
+    color: var(--clock); font-size: 0.82rem; font-weight: 600;
+    padding: 9px 2px; font-variant-numeric: tabular-nums;
+  }
+  .time-btn:hover { border-color: #444; background: #1e1e1e; }
   .date-btn {
-    background: #111; border: 1px solid #333; border-radius: 8px;
-    color: #88b4d8; font-size: 0.78rem; font-weight: 500;
-    padding: 6px 4px; cursor: pointer; width: 100%; font-family: inherit;
-    text-align: center; line-height: 1.5;
-    transition: border-color 0.15s, background 0.1s;
-    position: relative; overflow: hidden;
+    color: #7eb8d8; font-size: 0.74rem; font-weight: 500;
+    padding: 5px 4px; line-height: 1.5; position: relative; overflow: hidden;
   }
-  .date-btn:hover { border-color: #555; background: #161616; }
+  .date-btn:hover { border-color: #444; background: #1e1e1e; }
   .date-btn .date-ymd { display: block; }
-  .date-btn .date-wd  { display: block; font-size: 0.7rem; color: #5a8ab0; }
+  .date-btn .date-wd  { display: block; font-size: 0.66rem; color: #4a7fa0; }
+  .dur-input {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text2);
+    font-size: 0.82rem; padding: 9px 4px; width: 100%;
+    outline: none; font-family: inherit; text-align: center;
+  }
+  .dur-input:focus { border-color: #444; color: var(--text); }
   .del-btn {
-    background: transparent; border: 1px solid #2a2a2a; border-radius: 8px; color: #555;
-    font-size: 1rem; cursor: pointer; padding: 6px; line-height: 1; transition: all 0.15s;
+    background: transparent; border: 1px solid #242424;
+    border-radius: 8px; color: var(--text3); font-size: 0.95rem;
+    cursor: pointer; padding: 6px; line-height: 1; transition: all .15s;
   }
-  .del-btn:hover { border-color: #e55; color: #e55; }
+  .del-btn:hover { border-color: #c44; color: #e55; }
   #add-btn {
-    align-self: flex-start; background: #1e1e1e; border: 1px dashed #333;
-    border-radius: 8px; color: #555; font-size: 0.85rem; letter-spacing: 0.1em;
-    padding: 10px 18px; cursor: pointer; transition: all 0.15s;
+    align-self: flex-start; background: transparent; border: 1px dashed var(--border2);
+    border-radius: 8px; color: var(--text3); font-size: 0.82rem;
+    letter-spacing: 0.08em; padding: 9px 16px; cursor: pointer;
+    transition: all .15s; font-family: inherit;
   }
-  #add-btn:hover { border-color: #555; color: #aaa; }
-  .edit-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
-  .btn-reset  { background: transparent; border: 1px solid #333; border-radius: 8px; color: #666; font-size: 0.9rem; padding: 10px 20px; cursor: pointer; margin-right: auto; transition: all 0.15s; }
-  .btn-reset:hover { border-color: #e8a; color: #e8a; }
-  .btn-cancel { background: transparent; border: 1px solid #333; border-radius: 8px; color: #666; font-size: 0.9rem; padding: 10px 20px; cursor: pointer; }
-  .btn-save   { background: #4ade80; border: none; border-radius: 8px; color: #0a0a0a; font-size: 0.9rem; font-weight: 700; padding: 10px 24px; cursor: pointer; transition: background 0.15s; }
-  .btn-save:hover { background: #86efac; }
+  #add-btn:hover { border-color: #555; color: var(--text2); }
+  .edit-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+  .btn-reset {
+    background: transparent; border: 1px solid var(--border2); border-radius: 8px;
+    color: var(--text3); font-size: 0.85rem; padding: 9px 18px;
+    cursor: pointer; margin-right: auto; transition: all .15s; font-family: inherit;
+  }
+  .btn-reset:hover { border-color: #c8a; color: #daa; }
+  .btn-cancel {
+    background: transparent; border: 1px solid var(--border2); border-radius: 8px;
+    color: var(--text3); font-size: 0.85rem; padding: 9px 18px;
+    cursor: pointer; font-family: inherit;
+  }
+  .btn-cancel:hover { border-color: #444; color: var(--text2); }
+  .btn-save {
+    background: var(--accent); border: none; border-radius: 8px;
+    color: #000; font-size: 0.85rem; font-weight: 700;
+    padding: 9px 22px; cursor: pointer; font-family: inherit; transition: background .15s;
+  }
+  .btn-save:hover { background: #4ade80; }
 
-  /* ── Wheel Picker (iPhone Clock style) ── */
+  /* ── Wheel Picker ── */
   #wheel-overlay {
     display: none; position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.5);
-    align-items: flex-end; justify-content: center;
+    background: rgba(0,0,0,.55); align-items: flex-end; justify-content: center;
   }
   #wheel-overlay.open { display: flex; }
   #wheel-panel {
-    background: #1c1c1e; border-radius: 18px 18px 0 0;
+    background: #1c1c1e; border-radius: 20px 20px 0 0;
     width: 100%; max-width: 480px;
-    padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
-    box-shadow: 0 -12px 48px rgba(0,0,0,0.7);
+    padding-bottom: max(env(safe-area-inset-bottom,0px),16px);
+    box-shadow: 0 -16px 60px rgba(0,0,0,.8);
   }
   #wheel-toolbar {
     display: flex; justify-content: space-between; align-items: center;
     padding: 14px 20px; border-bottom: 1px solid #2c2c2e;
   }
-  #wheel-toolbar span { color: #777; font-size: 0.82rem; letter-spacing: 0.14em; text-transform: uppercase; }
-  .wheel-tb-btn { background: none; border: none; font-size: 1rem; cursor: pointer; padding: 4px 10px; font-family: inherit; border-radius: 6px; }
+  #wheel-toolbar span { color: #666; font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .wheel-tb-btn {
+    background: none; border: none; font-size: 0.95rem;
+    cursor: pointer; padding: 4px 10px; font-family: inherit; border-radius: 6px;
+  }
   #wheel-cancel-btn  { color: #555; }
-  #wheel-confirm-btn { color: #4ade80; font-weight: 700; }
-
+  #wheel-confirm-btn { color: var(--accent); font-weight: 700; }
   #wheel-body {
     display: flex; align-items: center; justify-content: center;
-    height: 216px; position: relative; gap: 0;
-    user-select: none; -webkit-user-select: none;
+    height: 220px; position: relative; user-select: none; -webkit-user-select: none;
   }
-
-  /* iPhone-style selection band */
   #wheel-body::before {
-    content: '';
-    position: absolute; left: 50%; transform: translateX(-50%);
-    width: 160px; top: calc(50% - 22px); height: 44px;
-    background: rgba(255,255,255,0.07);
-    border-radius: 10px;
+    content: ''; position: absolute; left: 50%; transform: translateX(-50%);
+    width: 156px; top: calc(50% - 22px); height: 44px;
+    background: rgba(255,255,255,.06); border-radius: 10px;
     pointer-events: none; z-index: 1;
   }
-
-  /* top/bottom gradient fade — strong, covers 3 items on each side */
   #wheel-body::after {
-    content: '';
-    position: absolute; inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: linear-gradient(to bottom,
-      #1c1c1e 0%,
-      #1c1c1e 14%,
-      rgba(28,28,30,0.75) 28%,
-      rgba(28,28,30,0) 42%,
-      rgba(28,28,30,0) 58%,
-      rgba(28,28,30,0.75) 72%,
-      #1c1c1e 86%,
-      #1c1c1e 100%);
+      #1c1c1e 0%, #1c1c1e 12%,
+      rgba(28,28,30,.7) 28%, rgba(28,28,30,0) 42%,
+      rgba(28,28,30,0) 58%, rgba(28,28,30,.7) 72%,
+      #1c1c1e 88%, #1c1c1e 100%);
     pointer-events: none; z-index: 2;
   }
-
   .wheel-col {
-    width: 88px; height: 216px;
+    width: 88px; height: 220px;
     overflow-y: scroll; scroll-snap-type: y mandatory;
     -ms-overflow-style: none; scrollbar-width: none;
   }
   .wheel-col::-webkit-scrollbar { display: none; }
-  .wheel-pad  { height: 86px; flex-shrink: 0; }
+  .wheel-pad  { height: 88px; }
   .wheel-item {
-    height: 44px;
-    display: flex; align-items: center; justify-content: center;
-    scroll-snap-align: center;
-    font-size: 2rem; font-weight: 400;
+    height: 44px; display: flex; align-items: center; justify-content: center;
+    scroll-snap-align: center; font-size: 2rem; font-weight: 400;
     color: #fff; font-variant-numeric: tabular-nums;
   }
   .wheel-sep {
     font-size: 2.2rem; font-weight: 500; color: #555;
-    padding: 0 2px; margin-top: -8px;
-    position: relative; z-index: 3; pointer-events: none;
+    padding: 0 2px; margin-top: -8px; position: relative; z-index: 3; pointer-events: none;
   }
 
-  /* Scrollbar */
+  /* Scrollbars */
   #schedule-panel::-webkit-scrollbar { width: 3px; }
-  #schedule-panel::-webkit-scrollbar-thumb { background: #252525; border-radius: 2px; }
+  #schedule-panel::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
   #edit-box::-webkit-scrollbar { width: 4px; }
-  #edit-box::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+  #edit-box::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
 
-  /* Mobile */
+  /* ── Mobile ── */
   @media (max-width: 640px) {
     #main { flex-direction: column; }
-    #schedule-panel { width: 100%; max-height: 42vh; border-right: none; border-bottom: 1px solid #222; padding: 14px; }
-    #current-panel  { width: 100%; flex: 1; padding: 20px 16px; }
-    .task-name  { font-size: clamp(1.15rem, 5vw, 1.6rem); }
-    .time-range { font-size: clamp(0.8rem, 3.5vw, 1rem); }
-    #clock      { font-size: clamp(4.5rem, 22vw, 10rem); margin-bottom: 14px; }
-    .edit-row, .edit-row-header { grid-template-columns: 18px 1fr 90px 58px 58px 42px 28px; gap: 5px; }
-    .time-btn   { font-size: 0.76rem; }
-    .dur-input  { font-size: 0.76rem; }
-    .date-btn   { font-size: 0.72rem; }
-    .date-btn .date-wd { font-size: 0.66rem; }
+    #schedule-panel {
+      width: 100%; max-height: 40vh;
+      border-right: none; border-bottom: 1px solid var(--border); padding: 12px;
+    }
+    #current-panel  { width: 100%; flex: 1; padding: 16px; }
+    #clock          { font-size: clamp(4rem, 22vw, 9rem); margin-bottom: 18px; }
+    #task-name-big  { font-size: clamp(2rem, 9vw, 4rem); }
+    .edit-row, .edit-row-header {
+      grid-template-columns: 16px 1fr 88px 58px 58px 42px 28px; gap: 4px;
+    }
+    .time-btn  { font-size: 0.76rem; }
+    .dur-input { font-size: 0.76rem; }
+    .date-btn  { font-size: 0.68rem; }
   }
 </style>
 </head>
 <body>
 
-<div id="date-bar">
-  <button class="top-btn" id="edit-btn" onclick="openEdit()">✏️ 編輯</button>
-  <div id="date-display">載入中…</div>
-  <button class="top-btn" id="sound-btn" onclick="toggleSound()">🔔 鐘聲</button>
+<!-- Header -->
+<div id="header">
+  <div id="header-left">
+    <button class="hdr-btn" id="edit-btn" onclick="openEdit()" data-i18n="edit">Edit</button>
+  </div>
+  <div id="date-display">—</div>
+  <div id="header-right">
+    <button class="hdr-btn" id="sound-btn" onclick="toggleSound()" data-i18n="bell">🔔 Bell</button>
+    <button class="hdr-btn" id="lang-btn" onclick="cycleLang()">EN</button>
+  </div>
 </div>
 
+<!-- Main -->
 <div id="main">
   <div id="schedule-panel">
-    <h2>任務時間表</h2>
+    <h2 data-i18n="scheduleTitle">SCHEDULE</h2>
     <div id="schedule-list"></div>
   </div>
   <div id="current-panel">
+    <div id="app-label">TASKCLOCK</div>
     <div id="clock">--:--</div>
-    <div id="progress-wrap">
-      <div id="progress-labels"><span id="prog-start"></span><span id="prog-end"></span></div>
-      <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
-      <div id="time-remaining"></div>
-    </div>
-    <div id="no-task">任務尚未開始</div>
+    <div id="no-task" data-i18n="notStarted">Not started yet</div>
     <div id="task-display">
-      <div id="task-label">目前進行中</div>
+      <div id="task-label" data-i18n="nowLabel">NOW</div>
       <div id="task-name-big"></div>
       <div id="task-time-range"></div>
+      <div id="progress-wrap">
+        <div id="progress-labels"><span id="prog-start"></span><span id="prog-end"></span></div>
+        <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
+        <div id="time-remaining"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -284,16 +390,22 @@
 <!-- Edit modal -->
 <div id="edit-modal">
   <div id="edit-box">
-    <h3>編輯任務</h3>
+    <h3 data-i18n="editTitle">EDIT SCHEDULE</h3>
     <div class="edit-row-header">
-      <span>#</span><span>任務名稱</span><span>日期</span><span>開始</span><span>結束</span><span style="text-align:center">時長(分)</span><span></span>
+      <span>#</span>
+      <span data-i18n="colName">Task</span>
+      <span data-i18n="colDate">Date</span>
+      <span data-i18n="colStart">Start</span>
+      <span data-i18n="colEnd">End</span>
+      <span style="text-align:center" data-i18n="colDur">Min</span>
+      <span></span>
     </div>
     <div id="edit-rows"></div>
-    <button id="add-btn" onclick="addRow()">＋ 新增任務</button>
+    <button id="add-btn" onclick="addRow()" data-i18n="addTask">+ Add Task</button>
     <div class="edit-actions">
-      <button class="btn-reset"  onclick="resetEdit()">↺ 重設</button>
-      <button class="btn-cancel" onclick="closeEdit()">取消</button>
-      <button class="btn-save"   onclick="saveEdit()">儲存</button>
+      <button class="btn-reset"  onclick="resetEdit()" data-i18n="reset">↺ Reset</button>
+      <button class="btn-cancel" onclick="closeEdit()" data-i18n="cancel">Cancel</button>
+      <button class="btn-save"   onclick="saveEdit()"  data-i18n="save">Save</button>
     </div>
   </div>
 </div>
@@ -302,9 +414,9 @@
 <div id="wheel-overlay">
   <div id="wheel-panel">
     <div id="wheel-toolbar">
-      <button class="wheel-tb-btn" id="wheel-cancel-btn"  onclick="closeWheel()">取消</button>
-      <span>選擇時間</span>
-      <button class="wheel-tb-btn" id="wheel-confirm-btn" onclick="confirmWheel()">確定</button>
+      <button class="wheel-tb-btn" id="wheel-cancel-btn"  onclick="closeWheel()" data-i18n="cancelTime">Cancel</button>
+      <span data-i18n="selectTime">Select Time</span>
+      <button class="wheel-tb-btn" id="wheel-confirm-btn" onclick="confirmWheel()" data-i18n="confirmTime">Done</button>
     </div>
     <div id="wheel-body">
       <div class="wheel-col" id="wh-hour"></div>
@@ -315,308 +427,410 @@
 </div>
 
 <script>
-  const DEFAULT = [
-    { start: '09:55', end: '10:00', name: '結印' },
-    { start: '10:00', end: '10:50', name: '立掌' },
-    { start: '10:50', end: '10:55', name: '蓮花手印' },
-    { start: '10:55', end: '11:00', name: '結印' },
-    { start: '11:00', end: '12:05', name: '立掌' },
-    { start: '12:05', end: '12:10', name: '蓮花手印' },
-  ];
+// ─────────────────────────────────────────
+// i18n
+// ─────────────────────────────────────────
+const LANGS = ['en','zh-TW','zh-CN','ja','ko'];
+const LANG_LABELS = { en:'EN', 'zh-TW':'繁', 'zh-CN':'简', ja:'日', ko:'한' };
 
-  let schedule;
-  try {
-    const stored = JSON.parse(localStorage.getItem('schedule'));
-    schedule = (Array.isArray(stored) && (stored.length === 0 || (stored[0].start && stored[0].end && stored[0].name)))
-      ? stored : DEFAULT;
-  } catch(e) { schedule = DEFAULT; }
+const i18n = {
+  en: {
+    scheduleTitle:'SCHEDULE', nowLabel:'NOW', notStarted:'Not started yet',
+    taskDone:'Session complete', onBreak:'On break', noTask:'No tasks scheduled',
+    timeLeft:(m,s)=>m>0?`${m}m ${s}s remaining`:`${s}s remaining`,
+    done:'Done',
+    editTitle:'EDIT SCHEDULE', colName:'Task', colDate:'Date',
+    colStart:'Start', colEnd:'End', colDur:'Min',
+    addTask:'+ Add Task', reset:'↺ Reset', cancel:'Cancel', save:'Save',
+    bell:'🔔 Bell', bellOn:'🔔 Bell On', edit:'✏️ Edit',
+    selectTime:'Select Time', confirmTime:'Done', cancelTime:'Cancel',
+    dateWeekdays:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    dateMonths:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    fmtDateBar:(d)=>{
+      const wd=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      const mo=['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return `${wd[d.getDay()]}, ${mo[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+    },
+    fmtWeekday:(iso)=>{
+      const [y,m,dy]=iso.split('-').map(Number);
+      return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(y,m-1,dy).getDay()];
+    }
+  },
+  'zh-TW': {
+    scheduleTitle:'時間表', nowLabel:'進行中', notStarted:'任務尚未開始',
+    taskDone:'任務已結束', onBreak:'休息中', noTask:'尚無任務',
+    timeLeft:(m,s)=>m>0?`剩餘 ${m} 分 ${s} 秒`:`剩餘 ${s} 秒`,
+    done:'完成',
+    editTitle:'編輯任務', colName:'任務名稱', colDate:'日期',
+    colStart:'開始', colEnd:'結束', colDur:'分鐘',
+    addTask:'＋ 新增任務', reset:'↺ 重設', cancel:'取消', save:'儲存',
+    bell:'🔔 鐘聲', bellOn:'🔔 鐘聲開', edit:'✏️ 編輯',
+    selectTime:'選擇時間', confirmTime:'確定', cancelTime:'取消',
+    fmtDateBar:(d)=>`${d.getFullYear()} 年 ${d.getMonth()+1} 月 ${d.getDate()} 日　星期${'日一二三四五六'[d.getDay()]}`,
+    fmtWeekday:(iso)=>{const [y,m,dy]=iso.split('-').map(Number);return '週'+'日一二三四五六'[new Date(y,m-1,dy).getDay()];}
+  },
+  'zh-CN': {
+    scheduleTitle:'日程表', nowLabel:'进行中', notStarted:'任务未开始',
+    taskDone:'任务已结束', onBreak:'休息中', noTask:'暂无任务',
+    timeLeft:(m,s)=>m>0?`剩余 ${m} 分 ${s} 秒`:`剩余 ${s} 秒`,
+    done:'完成',
+    editTitle:'编辑任务', colName:'任务名称', colDate:'日期',
+    colStart:'开始', colEnd:'结束', colDur:'分钟',
+    addTask:'＋ 新增任务', reset:'↺ 重置', cancel:'取消', save:'保存',
+    bell:'🔔 铃声', bellOn:'🔔 铃声开', edit:'✏️ 编辑',
+    selectTime:'选择时间', confirmTime:'确定', cancelTime:'取消',
+    fmtDateBar:(d)=>`${d.getFullYear()} 年 ${d.getMonth()+1} 月 ${d.getDate()} 日　星期${'日一二三四五六'[d.getDay()]}`,
+    fmtWeekday:(iso)=>{const [y,m,dy]=iso.split('-').map(Number);return '周'+'日一二三四五六'[new Date(y,m-1,dy).getDay()];}
+  },
+  ja: {
+    scheduleTitle:'スケジュール', nowLabel:'進行中', notStarted:'まだ開始していません',
+    taskDone:'セッション終了', onBreak:'休憩中', noTask:'タスクなし',
+    timeLeft:(m,s)=>m>0?`残り ${m} 分 ${s} 秒`:`残り ${s} 秒`,
+    done:'完了',
+    editTitle:'スケジュール編集', colName:'タスク名', colDate:'日付',
+    colStart:'開始', colEnd:'終了', colDur:'分',
+    addTask:'＋ タスク追加', reset:'↺ リセット', cancel:'キャンセル', save:'保存',
+    bell:'🔔 ベル', bellOn:'🔔 ベルON', edit:'✏️ 編集',
+    selectTime:'時刻を選択', confirmTime:'確定', cancelTime:'キャンセル',
+    fmtDateBar:(d)=>{const wd=['日','月','火','水','木','金','土'];return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${wd[d.getDay()]}）`;},
+    fmtWeekday:(iso)=>{const [y,m,dy]=iso.split('-').map(Number);return ['日','月','火','水','木','金','土'][new Date(y,m-1,dy).getDay()]+'曜';}
+  },
+  ko: {
+    scheduleTitle:'일정표', nowLabel:'진행 중', notStarted:'아직 시작 전',
+    taskDone:'세션 완료', onBreak:'휴식 중', noTask:'예정된 작업 없음',
+    timeLeft:(m,s)=>m>0?`${m}분 ${s}초 남음`:`${s}초 남음`,
+    done:'완료',
+    editTitle:'일정 편집', colName:'작업명', colDate:'날짜',
+    colStart:'시작', colEnd:'종료', colDur:'분',
+    addTask:'＋ 작업 추가', reset:'↺ 초기화', cancel:'취소', save:'저장',
+    bell:'🔔 벨', bellOn:'🔔 벨 ON', edit:'✏️ 편집',
+    selectTime:'시간 선택', confirmTime:'확인', cancelTime:'취소',
+    fmtDateBar:(d)=>{const wd=['일','월','화','수','목','금','토'];return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${wd[d.getDay()]}요일)`;},
+    fmtWeekday:(iso)=>{const [y,m,dy]=iso.split('-').map(Number);return ['일','월','화','수','목','금','토'][new Date(y,m-1,dy).getDay()]+'요';}
+  }
+};
 
-  const weekdays = ['日','一','二','三','四','五','六'];
+let lang = localStorage.getItem('lang') || 'en';
 
-  function todayISO() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-  function setDateBtn(btn, iso) {
-    if (!iso) return;
-    const [y,m,d] = iso.split('-').map(Number);
-    const wd = new Date(y, m-1, d).getDay();
-    btn.querySelector('.date-ymd').textContent = `${y}/${String(m).padStart(2,'0')}/${String(d).padStart(2,'0')}`;
-    btn.querySelector('.date-wd').textContent  = `週${weekdays[wd]}`;
-    btn.dataset.value = iso;
-  }
+function t(key) { return (i18n[lang]||i18n.en)[key] || key; }
 
-  function toSec(t) { const [h,m] = t.split(':').map(Number); return (h*60+m)*60; }
-  function fmt(t)   { const [h,m] = t.split(':').map(Number); return `${h%12||12}:${String(m).padStart(2,'0')}${h>=12?'pm':'am'}`; }
-  function fmtRemain(s) {
-    if (s <= 0) return '完成';
-    const m = Math.floor(s/60), r = s%60;
-    return m > 0 ? `剩餘 ${m} 分 ${r} 秒` : `剩餘 ${r} 秒`;
-  }
-  function timeToMin(t) {
-    if (!t || !t.includes(':')) return 0;
-    const [h,m] = t.split(':').map(Number); return h*60+m;
-  }
-  function addMinutes(t, delta) {
-    const total = ((timeToMin(t) + delta) % 1440 + 1440) % 1440;
-    return `${String(Math.floor(total/60)).padStart(2,'0')}:${String(total%60).padStart(2,'0')}`;
-  }
+function applyLang() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (key === 'bell')    { el.textContent = soundOn ? t('bellOn') : t('bell'); return; }
+    if (key === 'bellOn')  { return; }
+    el.textContent = t(key);
+  });
+  document.getElementById('lang-btn').textContent = LANG_LABELS[lang];
+  document.documentElement.lang = lang;
+}
 
-  // ── Build left panel ──
-  function buildList() {
-    const el = document.getElementById('schedule-list');
-    el.innerHTML = '';
-    schedule.forEach((item, i) => {
+function cycleLang() {
+  const idx = LANGS.indexOf(lang);
+  lang = LANGS[(idx+1) % LANGS.length];
+  localStorage.setItem('lang', lang);
+  applyLang();
+  buildList(); // rebuild dates
+}
+
+// ─────────────────────────────────────────
+// Data
+// ─────────────────────────────────────────
+const DEFAULT = [
+  { start:'09:00', end:'09:05', name:'Opening' },
+  { start:'09:05', end:'09:30', name:'Presentation' },
+  { start:'09:30', end:'09:50', name:'Discussion' },
+  { start:'09:50', end:'09:55', name:'Q & A' },
+  { start:'09:55', end:'10:00', name:'Wrap Up' },
+];
+
+let schedule;
+try {
+  const s = JSON.parse(localStorage.getItem('schedule'));
+  schedule = (Array.isArray(s) && (s.length===0 || (s[0].start&&s[0].end&&s[0].name))) ? s : DEFAULT;
+} catch(e) { schedule = DEFAULT; }
+
+// ─────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────
+function toSec(t)  { const [h,m]=t.split(':').map(Number); return (h*60+m)*60; }
+function fmt12(t)  { const [h,m]=t.split(':').map(Number); return `${h%12||12}:${String(m).padStart(2,'0')}${h>=12?'pm':'am'}`; }
+function timeToMin(t) { if(!t||!t.includes(':')) return 0; const [h,m]=t.split(':').map(Number); return h*60+m; }
+function addMinutes(t,d) { const tot=((timeToMin(t)+d)%1440+1440)%1440; return `${String(Math.floor(tot/60)).padStart(2,'0')}:${String(tot%60).padStart(2,'0')}`; }
+function todayISO() { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+
+function setDateBtn(btn, iso) {
+  if (!iso) return;
+  const [y,m,d] = iso.split('-').map(Number);
+  btn.querySelector('.date-ymd').textContent = `${y}/${String(m).padStart(2,'0')}/${String(d).padStart(2,'0')}`;
+  btn.querySelector('.date-wd').textContent  = t('fmtWeekday')(iso);
+  btn.dataset.value = iso;
+}
+
+// ─────────────────────────────────────────
+// Left panel
+// ─────────────────────────────────────────
+function buildList() {
+  const el = document.getElementById('schedule-list');
+  el.innerHTML = '';
+  // Group by date
+  const groups = {};
+  schedule.forEach((item,i) => {
+    const d = item.date || '';
+    if (!groups[d]) groups[d] = [];
+    groups[d].push({item,i});
+  });
+  Object.keys(groups).sort().forEach(dateKey => {
+    if (dateKey) {
+      const lbl = document.createElement('div');
+      lbl.className = 'date-group-label';
+      if (dateKey === todayISO()) {
+        lbl.textContent = lang==='en'?'Today':lang==='ja'?'今日':lang==='ko'?'오늘':'今天';
+      } else {
+        const [y,m,d] = dateKey.split('-').map(Number);
+        lbl.textContent = lang==='en'
+          ? `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]} ${d}`
+          : `${m}/${d}`;
+      }
+      el.appendChild(lbl);
+    }
+    groups[dateKey].forEach(({item,i}) => {
       const row = document.createElement('div');
-      row.className = 'schedule-item'; row.id = `item-${i}`;
-      row.innerHTML = `
-        <div class="dot" id="dot-${i}"></div>
-        <div class="schedule-item-text">
-          <div class="time-range">${fmt(item.start)} – ${fmt(item.end)}</div>
-          <div class="task-name">${i+1}. ${item.name}</div>
+      row.className='schedule-item'; row.id=`item-${i}`;
+      row.innerHTML=`<div class="dot" id="dot-${i}"></div>
+        <div class="item-text">
+          <div class="item-time">${fmt12(item.start)} – ${fmt12(item.end)}</div>
+          <div class="item-name">${i+1}. ${item.name}</div>
         </div>`;
       el.appendChild(row);
     });
+  });
+}
+buildList();
+
+// ─────────────────────────────────────────
+// Tick
+// ─────────────────────────────────────────
+let lastActiveIdx = -2;
+
+function taskState(item) {
+  const now = new Date();
+  const now_s = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
+  const today = todayISO();
+  const d = item.date || today;
+  const cross = toSec(item.end) < toSec(item.start);
+  if (d < today) return 'done';
+  if (d > today) return 'upcoming';
+  if (cross) return now_s >= toSec(item.start) ? 'active' : 'upcoming';
+  if (now_s >= toSec(item.start) && now_s < toSec(item.end)) return 'active';
+  if (now_s >= toSec(item.end)) return 'done';
+  return 'upcoming';
+}
+
+function tick() {
+  const now = new Date();
+  const now_s = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
+
+  document.getElementById('clock').textContent =
+    `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('date-display').textContent = t('fmtDateBar')(now);
+
+  let activeIdx = -1;
+  schedule.forEach((item,i) => { if (taskState(item)==='active') activeIdx=i; });
+
+  schedule.forEach((item,i) => {
+    const row = document.getElementById(`item-${i}`);
+    const dot = document.getElementById(`dot-${i}`);
+    if (!row) return;
+    row.classList.remove('active','done'); dot.classList.remove('active');
+    const st = taskState(item);
+    if (st==='active') { row.classList.add('active'); dot.classList.add('active'); }
+    else if (st==='done') row.classList.add('done');
+  });
+
+  if (lastActiveIdx !== -2 && activeIdx !== lastActiveIdx && activeIdx !== -1) playBell();
+  lastActiveIdx = activeIdx;
+
+  const noTask   = document.getElementById('no-task');
+  const taskDisp = document.getElementById('task-display');
+
+  if (activeIdx === -1) {
+    taskDisp.style.display = 'none'; noTask.style.display = '';
+    if (schedule.length === 0) { noTask.textContent = t('noTask'); return; }
+    const todayTasks = schedule.filter(item => (item.date||todayISO()) === todayISO());
+    if (todayTasks.length === 0) { noTask.textContent = t('noTask'); return; }
+    const first = toSec(todayTasks[0].start), last = toSec(todayTasks[todayTasks.length-1].end);
+    noTask.textContent = now_s < first ? t('notStarted') : now_s >= last ? t('taskDone') : t('onBreak');
+    document.getElementById('prog-start').textContent = '';
+    document.getElementById('prog-end').textContent   = '';
+    document.getElementById('progress-bar-fill').style.width = '0%';
+    document.getElementById('time-remaining').textContent = '';
+  } else {
+    noTask.style.display = 'none'; taskDisp.style.display = 'flex';
+    const item = schedule[activeIdx];
+    const s = toSec(item.start), e = toSec(item.end);
+    document.getElementById('task-label').textContent     = t('nowLabel');
+    document.getElementById('task-name-big').textContent  = item.name;
+    document.getElementById('task-time-range').textContent= `${fmt12(item.start)} – ${fmt12(item.end)}`;
+    document.getElementById('prog-start').textContent     = fmt12(item.start);
+    document.getElementById('prog-end').textContent       = fmt12(item.end);
+    document.getElementById('progress-bar-fill').style.width = Math.min(100,(now_s-s)/(e-s)*100)+'%';
+    const rem = e - now_s;
+    const rm = Math.floor(rem/60), rs = rem%60;
+    document.getElementById('time-remaining').textContent = rem>0 ? t('timeLeft')(rm,rs) : t('done');
   }
-  buildList();
+}
+tick(); setInterval(tick, 1000);
 
-  // ── Tick ──
-  let lastActiveIdx = -2;
-  function tick() {
-    const now = new Date();
-    document.getElementById('clock').textContent =
-      `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-    document.getElementById('date-display').textContent =
-      `${now.getFullYear()} 年 ${now.getMonth()+1} 月 ${now.getDate()} 日　星期${weekdays[now.getDay()]}`;
+// ─────────────────────────────────────────
+// Audio
+// ─────────────────────────────────────────
+const bellAudio = new Audio('bell.wav');
+bellAudio.preload = 'auto';
+let soundOn = false;
+function toggleSound() {
+  soundOn = !soundOn;
+  const btn = document.getElementById('sound-btn');
+  btn.textContent = soundOn ? t('bellOn') : t('bell');
+  btn.classList.toggle('on', soundOn);
+  if (soundOn) { bellAudio.currentTime=0; bellAudio.play().catch(()=>{}); }
+}
+function playBell() {
+  if (!soundOn) return;
+  bellAudio.currentTime=0; bellAudio.play().catch(()=>{});
+}
 
-    const now_s   = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
-    const todayStr = todayISO();
+// ─────────────────────────────────────────
+// Wheel Picker
+// ─────────────────────────────────────────
+const ITEM_H = 44;
+(function() {
+  const hc=document.getElementById('wh-hour'), mc=document.getElementById('wh-min');
+  const pad=()=>{const d=document.createElement('div');d.className='wheel-pad';return d;};
+  const item=v=>{const d=document.createElement('div');d.className='wheel-item';d.textContent=String(v).padStart(2,'0');return d;};
+  hc.appendChild(pad());
+  for(let h=0;h<24;h++) hc.appendChild(item(h));
+  hc.appendChild(pad());
+  mc.appendChild(pad());
+  for(let m=0;m<60;m++) mc.appendChild(item(m));
+  mc.appendChild(pad());
+})();
 
-    // returns 'active' | 'done' | 'upcoming' for each task
-    function taskState(item) {
-      const d = item.date || todayStr;
-      const crossMid = toSec(item.end) < toSec(item.start); // spans midnight
-      if (d < todayStr) return 'done';
-      if (d > todayStr) return 'upcoming';
-      // d === today
-      if (crossMid) {
-        return now_s >= toSec(item.start) ? 'active' : 'upcoming';
-      }
-      if (now_s >= toSec(item.start) && now_s < toSec(item.end)) return 'active';
-      if (now_s >= toSec(item.end)) return 'done';
-      return 'upcoming';
-    }
+const hourCol = document.getElementById('wh-hour');
+const minCol  = document.getElementById('wh-min');
+let wheelTarget = null;
 
-    let activeIdx = -1;
-    schedule.forEach((item, i) => { if (taskState(item) === 'active') activeIdx = i; });
-
-    schedule.forEach((item, i) => {
-      const row = document.getElementById(`item-${i}`);
-      const dot = document.getElementById(`dot-${i}`);
-      if (!row) return;
-      row.classList.remove('active','done'); dot.classList.remove('active');
-      const st = taskState(item);
-      if (st === 'active') { row.classList.add('active'); dot.classList.add('active'); }
-      else if (st === 'done') row.classList.add('done');
-    });
-
-    if (lastActiveIdx !== -2 && activeIdx !== lastActiveIdx && activeIdx !== -1) playBell();
-    lastActiveIdx = activeIdx;
-
-    const noTask   = document.getElementById('no-task');
-    const taskDisp = document.getElementById('task-display');
-    if (activeIdx === -1) {
-      taskDisp.style.display = 'none'; noTask.style.display = '';
-      if (schedule.length === 0) { noTask.textContent = '尚無任務'; return; }
-      const first = toSec(schedule[0].start), last = toSec(schedule[schedule.length-1].end);
-      noTask.textContent = now_s < first ? '任務尚未開始' : now_s >= last ? '任務已結束' : '休息中';
-      document.getElementById('prog-start').textContent = '';
-      document.getElementById('prog-end').textContent   = '';
-      document.getElementById('progress-bar-fill').style.width = '0%';
-      document.getElementById('time-remaining').textContent    = '';
-    } else {
-      noTask.style.display = 'none'; taskDisp.style.display = 'flex';
-      const item = schedule[activeIdx];
-      const s = toSec(item.start), e = toSec(item.end);
-      document.getElementById('task-name-big').textContent   = item.name;
-      document.getElementById('task-time-range').textContent = `${fmt(item.start)} – ${fmt(item.end)}`;
-      document.getElementById('prog-start').textContent      = fmt(item.start);
-      document.getElementById('prog-end').textContent        = fmt(item.end);
-      document.getElementById('progress-bar-fill').style.width = Math.min(100,(now_s-s)/(e-s)*100) + '%';
-      document.getElementById('time-remaining').textContent    = fmtRemain(e - now_s);
-    }
+function openWheel(row, field) {
+  wheelTarget = {row, field};
+  const btn = field==='start' ? row.querySelector('.time-start-btn') : row.querySelector('.time-end-btn');
+  const [h,m] = (btn.dataset.value||'09:00').split(':').map(Number);
+  hourCol.scrollTop = h*ITEM_H; minCol.scrollTop = m*ITEM_H;
+  document.getElementById('wheel-overlay').classList.add('open');
+}
+function confirmWheel() {
+  if (!wheelTarget) return;
+  const {row,field} = wheelTarget;
+  const h = Math.min(23,Math.round(hourCol.scrollTop/ITEM_H));
+  const m = Math.min(59,Math.round(minCol.scrollTop/ITEM_H));
+  const val = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  const sBtn = row.querySelector('.time-start-btn');
+  const eBtn = row.querySelector('.time-end-btn');
+  const dur  = row.querySelector('.dur-input');
+  if (field==='start') {
+    sBtn.dataset.value=val; sBtn.textContent=val;
+    const end=addMinutes(val,parseInt(dur.value)||0);
+    eBtn.dataset.value=end; eBtn.textContent=end;
+  } else {
+    eBtn.dataset.value=val; eBtn.textContent=val;
+    let d=timeToMin(val)-timeToMin(sBtn.dataset.value);
+    if(d<0) d+=1440;
+    dur.value=d;
   }
-  tick(); setInterval(tick, 1000);
+  closeWheel();
+}
+function closeWheel() {
+  document.getElementById('wheel-overlay').classList.remove('open');
+  wheelTarget=null;
+}
+document.getElementById('wheel-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeWheel();});
 
-  // ── Audio ──
-  const bellAudio = new Audio('bell.wav');
-  bellAudio.preload = 'auto';
-  let soundOn = false;
-  function toggleSound() {
-    soundOn = !soundOn;
-    const btn = document.getElementById('sound-btn');
-    btn.textContent = soundOn ? '🔔 鐘聲開' : '🔔 鐘聲';
-    btn.classList.toggle('on', soundOn);
-    if (soundOn) { bellAudio.currentTime = 0; bellAudio.play().catch(()=>{}); }
-  }
-  function playBell() {
-    if (!soundOn) return;
-    bellAudio.currentTime = 0; bellAudio.play().catch(()=>{});
-  }
+// ─────────────────────────────────────────
+// Edit panel
+// ─────────────────────────────────────────
+function reNumber() {
+  document.querySelectorAll('#edit-rows .edit-row').forEach((r,i)=>r.querySelector('.edit-num').textContent=i+1);
+}
 
-  // ── Wheel Picker ──
-  const ITEM_H = 44;
+function addRowData(name, startTime, endTime, date) {
+  const container = document.getElementById('edit-rows');
+  let dur = timeToMin(endTime)-timeToMin(startTime);
+  if (dur<0) dur+=1440;
+  date = date||todayISO();
+  const row = document.createElement('div');
+  row.className='edit-row';
+  row.innerHTML=`
+    <div class="edit-num">${container.children.length+1}</div>
+    <input type="text" placeholder="${t('colName')}">
+    <button class="date-btn" type="button"><span class="date-ymd"></span><span class="date-wd"></span></button>
+    <button class="time-btn time-start-btn" data-value="${startTime}">${startTime}</button>
+    <button class="time-btn time-end-btn"   data-value="${endTime}">${endTime}</button>
+    <input  class="dur-input" type="number" value="${dur}" min="0" max="1439">
+    <button class="del-btn" onclick="removeRow(this)">✕</button>`;
+  row.querySelector('input[type="text"]').value = name;
+  setDateBtn(row.querySelector('.date-btn'), date);
+  const dateInput = document.createElement('input');
+  dateInput.type='date'; dateInput.value=date;
+  dateInput.style.cssText='position:absolute;opacity:0;width:0;height:0;pointer-events:none;';
+  row.querySelector('.date-btn').appendChild(dateInput);
+  row.querySelector('.date-btn').addEventListener('click',()=>{
+    try{dateInput.showPicker();}catch(e){dateInput.click();}
+  });
+  dateInput.addEventListener('change',()=>setDateBtn(row.querySelector('.date-btn'),dateInput.value));
+  row.querySelector('.time-start-btn').addEventListener('click',()=>openWheel(row,'start'));
+  row.querySelector('.time-end-btn').addEventListener(  'click',()=>openWheel(row,'end'));
+  row.querySelector('.dur-input').addEventListener('input',()=>{
+    const d=parseInt(row.querySelector('.dur-input').value)||0;
+    const end=addMinutes(row.querySelector('.time-start-btn').dataset.value,d);
+    row.querySelector('.time-end-btn').dataset.value=end;
+    row.querySelector('.time-end-btn').textContent=end;
+  });
+  container.appendChild(row);
+}
 
-  // Build wheel items
-  (function() {
-    function pad() { const d = document.createElement('div'); d.className = 'wheel-pad'; return d; }
-    function item(v) { const d = document.createElement('div'); d.className = 'wheel-item'; d.textContent = String(v).padStart(2,'0'); return d; }
-    const hc = document.getElementById('wh-hour');
-    const mc = document.getElementById('wh-min');
-    hc.appendChild(pad());
-    for (let h = 0; h < 24; h++) hc.appendChild(item(h));
-    hc.appendChild(pad());
-    mc.appendChild(pad());
-    for (let m = 0; m < 60; m++) mc.appendChild(item(m));
-    mc.appendChild(pad());
-  })();
+function addRow() {
+  const rows = document.querySelectorAll('#edit-rows .edit-row');
+  const st = rows.length>0 ? (rows[rows.length-1].querySelector('.time-end-btn').dataset.value||'09:00') : '09:00';
+  addRowData('', st, addMinutes(st,30));
+}
+function removeRow(btn) { btn.closest('.edit-row').remove(); reNumber(); }
+function loadEditRows(src) {
+  document.getElementById('edit-rows').innerHTML='';
+  src.forEach(item=>addRowData(item.name,item.start,item.end,item.date));
+}
+function openEdit()  { loadEditRows(schedule); document.getElementById('edit-modal').classList.add('open'); }
+function closeEdit() { document.getElementById('edit-modal').classList.remove('open'); }
+function resetEdit() {
+  schedule=[]; localStorage.setItem('schedule','[]');
+  lastActiveIdx=-2; buildList();
+  document.getElementById('edit-rows').innerHTML='';
+}
+function saveEdit() {
+  const ns=[];
+  document.querySelectorAll('#edit-rows .edit-row').forEach(row=>{
+    const name  = row.querySelector('input[type="text"]').value.trim();
+    const start = row.querySelector('.time-start-btn').dataset.value;
+    const end   = row.querySelector('.time-end-btn').dataset.value;
+    const date  = row.querySelector('.date-btn').dataset.value||todayISO();
+    if (name&&start&&end) ns.push({date,start,end,name});
+  });
+  schedule=ns; localStorage.setItem('schedule',JSON.stringify(schedule));
+  lastActiveIdx=-2; buildList(); closeEdit();
+}
 
-  const hourCol = document.getElementById('wh-hour');
-  const minCol  = document.getElementById('wh-min');
-
-  let wheelTarget = null;
-
-  function openWheel(row, field) {
-    wheelTarget = { row, field };
-    const btn = field === 'start' ? row.querySelector('.time-start-btn') : row.querySelector('.time-end-btn');
-    const [h, m] = (btn.dataset.value || '09:00').split(':').map(Number);
-    hourCol.scrollTop = h * ITEM_H;
-    minCol.scrollTop  = m * ITEM_H;
-    document.getElementById('wheel-overlay').classList.add('open');
-  }
-
-  function confirmWheel() {
-    if (!wheelTarget) return;
-    const { row, field } = wheelTarget;
-    const h   = Math.min(23, Math.round(hourCol.scrollTop / ITEM_H));
-    const m   = Math.min(59, Math.round(minCol.scrollTop  / ITEM_H));
-    const val = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-
-    const startBtn = row.querySelector('.time-start-btn');
-    const endBtn   = row.querySelector('.time-end-btn');
-    const durInput = row.querySelector('.dur-input');
-
-    if (field === 'start') {
-      // Keep duration, recalculate end
-      const dur = parseInt(durInput.value) || 0;
-      startBtn.dataset.value = val; startBtn.textContent = val;
-      const newEnd = addMinutes(val, dur);
-      endBtn.dataset.value = newEnd; endBtn.textContent = newEnd;
-    } else {
-      // Keep start, recalculate duration (handle cross-midnight)
-      endBtn.dataset.value = val; endBtn.textContent = val;
-      let dur = timeToMin(val) - timeToMin(startBtn.dataset.value);
-      if (dur < 0) dur += 1440;
-      durInput.value = dur;
-    }
-    closeWheel();
-  }
-
-  function closeWheel() {
-    document.getElementById('wheel-overlay').classList.remove('open');
-    wheelTarget = null;
-  }
-  document.getElementById('wheel-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeWheel(); });
-
-  // ── Edit panel ──
-  function reNumber() {
-    document.querySelectorAll('#edit-rows .edit-row').forEach((r,i) => r.querySelector('.edit-num').textContent = i+1);
-  }
-
-  function addRowData(name, startTime, endTime, date) {
-    const container = document.getElementById('edit-rows');
-    let dur = timeToMin(endTime) - timeToMin(startTime);
-    if (dur < 0) dur += 1440; // cross-midnight
-    date = date || todayISO();
-    const row = document.createElement('div');
-    row.className = 'edit-row';
-    row.innerHTML = `
-      <div class="edit-num">${container.children.length + 1}</div>
-      <input type="text" placeholder="任務名稱">
-      <button class="date-btn" type="button">
-        <span class="date-ymd"></span>
-        <span class="date-wd"></span>
-      </button>
-      <button class="time-btn time-start-btn" data-value="${startTime}">${startTime}</button>
-      <button class="time-btn time-end-btn"   data-value="${endTime}">${endTime}</button>
-      <input  class="dur-input" type="number" value="${dur}" min="0" max="1439">
-      <button class="del-btn" onclick="removeRow(this)">✕</button>`;
-    row.querySelector('input[type="text"]').value = name;
-    setDateBtn(row.querySelector('.date-btn'), date);
-
-    // Hidden native date input — on iOS opens system wheel picker
-    const dateInput = document.createElement('input');
-    dateInput.type = 'date'; dateInput.value = date;
-    dateInput.style.cssText = 'position:absolute;opacity:0;width:0;height:0;pointer-events:none;';
-    row.querySelector('.date-btn').appendChild(dateInput);
-    row.querySelector('.date-btn').addEventListener('click', () => {
-      try { dateInput.showPicker(); } catch(e) { dateInput.click(); }
-    });
-    dateInput.addEventListener('change', () => setDateBtn(row.querySelector('.date-btn'), dateInput.value));
-
-    row.querySelector('.time-start-btn').addEventListener('click', () => openWheel(row, 'start'));
-    row.querySelector('.time-end-btn').addEventListener(  'click', () => openWheel(row, 'end'));
-    row.querySelector('.dur-input').addEventListener('input', () => {
-      const d   = parseInt(row.querySelector('.dur-input').value) || 0;
-      const st  = row.querySelector('.time-start-btn').dataset.value;
-      const end = addMinutes(st, d);
-      row.querySelector('.time-end-btn').dataset.value = end;
-      row.querySelector('.time-end-btn').textContent   = end;
-    });
-    container.appendChild(row);
-  }
-
-  function addRow() {
-    const rows = document.querySelectorAll('#edit-rows .edit-row');
-    const startTime = rows.length > 0
-      ? (rows[rows.length-1].querySelector('.time-end-btn').dataset.value || '09:00')
-      : '09:00';
-    addRowData('', startTime, addMinutes(startTime, 30));
-  }
-
-  function removeRow(btn) { btn.closest('.edit-row').remove(); reNumber(); }
-
-  function loadEditRows(src) {
-    document.getElementById('edit-rows').innerHTML = '';
-    src.forEach(item => addRowData(item.name, item.start, item.end, item.date));
-  }
-
-  function openEdit()  { loadEditRows(schedule); document.getElementById('edit-modal').classList.add('open'); }
-  function closeEdit() { document.getElementById('edit-modal').classList.remove('open'); }
-
-  function resetEdit() {
-    schedule = [];
-    localStorage.setItem('schedule', '[]');
-    lastActiveIdx = -2;
-    buildList();
-    document.getElementById('edit-rows').innerHTML = '';
-  }
-
-  function saveEdit() {
-    const newSchedule = [];
-    document.querySelectorAll('#edit-rows .edit-row').forEach(row => {
-      const name  = row.querySelector('input[type="text"]').value.trim();
-      const start = row.querySelector('.time-start-btn').dataset.value;
-      const end   = row.querySelector('.time-end-btn').dataset.value;
-      const date  = row.querySelector('.date-btn').dataset.value || todayISO();
-      if (name && start && end) newSchedule.push({ date, start, end, name });
-    });
-    schedule = newSchedule;
-    localStorage.setItem('schedule', JSON.stringify(schedule));
-    lastActiveIdx = -2;
-    buildList();
-    closeEdit();
-  }
+// ─────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────
+applyLang();
 </script>
 </body>
 </html>
