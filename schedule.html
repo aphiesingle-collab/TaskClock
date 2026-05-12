@@ -430,8 +430,8 @@
 // ─────────────────────────────────────────
 // i18n
 // ─────────────────────────────────────────
-const LANGS = ['en','zh-TW','zh-CN','ja','ko'];
-const LANG_LABELS = { en:'EN', 'zh-TW':'繁', 'zh-CN':'简', ja:'日', ko:'한' };
+const LANGS = ['en','zh-TW','zh-CN','es','fr'];
+const LANG_LABELS = { en:'EN', 'zh-TW':'繁', 'zh-CN':'简', es:'ES', fr:'FR' };
 
 const i18n = {
   en: {
@@ -482,31 +482,45 @@ const i18n = {
     fmtDateBar:(d)=>`${d.getFullYear()} 年 ${d.getMonth()+1} 月 ${d.getDate()} 日　星期${'日一二三四五六'[d.getDay()]}`,
     fmtWeekday:(iso)=>{const [y,m,dy]=iso.split('-').map(Number);return '周'+'日一二三四五六'[new Date(y,m-1,dy).getDay()];}
   },
-  ja: {
-    scheduleTitle:'スケジュール', nowLabel:'進行中', notStarted:'まだ開始していません',
-    taskDone:'セッション終了', onBreak:'休憩中', noTask:'タスクなし',
-    timeLeft:(m,s)=>m>0?`残り ${m} 分 ${s} 秒`:`残り ${s} 秒`,
-    done:'完了',
-    editTitle:'スケジュール編集', colName:'タスク名', colDate:'日付',
-    colStart:'開始', colEnd:'終了', colDur:'分',
-    addTask:'＋ タスク追加', reset:'↺ リセット', cancel:'キャンセル', save:'保存',
-    bell:'🔔 ベル', bellOn:'🔔 ベルON', edit:'✏️ 編集',
-    selectTime:'時刻を選択', confirmTime:'確定', cancelTime:'キャンセル',
-    fmtDateBar:(d)=>{const wd=['日','月','火','水','木','金','土'];return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${wd[d.getDay()]}）`;},
-    fmtWeekday:(iso)=>{const [y,m,dy]=iso.split('-').map(Number);return ['日','月','火','水','木','金','土'][new Date(y,m-1,dy).getDay()]+'曜';}
+  es: {
+    scheduleTitle:'HORARIO', nowLabel:'AHORA', notStarted:'Aún no ha comenzado',
+    taskDone:'Sesión completada', onBreak:'En descanso', noTask:'Sin tareas programadas',
+    timeLeft:(m,s)=>m>0?`${m}m ${s}s restantes`:`${s}s restantes`,
+    done:'Listo',
+    editTitle:'EDITAR HORARIO', colName:'Tarea', colDate:'Fecha',
+    colStart:'Inicio', colEnd:'Fin', colDur:'Min',
+    addTask:'+ Agregar tarea', reset:'↺ Reiniciar', cancel:'Cancelar', save:'Guardar',
+    bell:'🔔 Campana', bellOn:'🔔 Campana On', edit:'✏️ Editar',
+    selectTime:'Seleccionar hora', confirmTime:'Listo', cancelTime:'Cancelar',
+    fmtDateBar:(d)=>{
+      const wd=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+      const mo=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+      return `${wd[d.getDay()]}, ${d.getDate()} de ${mo[d.getMonth()]} de ${d.getFullYear()}`;
+    },
+    fmtWeekday:(iso)=>{
+      const [y,m,dy]=iso.split('-').map(Number);
+      return ['dom','lun','mar','mié','jue','vie','sáb'][new Date(y,m-1,dy).getDay()];
+    }
   },
-  ko: {
-    scheduleTitle:'일정표', nowLabel:'진행 중', notStarted:'아직 시작 전',
-    taskDone:'세션 완료', onBreak:'휴식 중', noTask:'예정된 작업 없음',
-    timeLeft:(m,s)=>m>0?`${m}분 ${s}초 남음`:`${s}초 남음`,
-    done:'완료',
-    editTitle:'일정 편집', colName:'작업명', colDate:'날짜',
-    colStart:'시작', colEnd:'종료', colDur:'분',
-    addTask:'＋ 작업 추가', reset:'↺ 초기화', cancel:'취소', save:'저장',
-    bell:'🔔 벨', bellOn:'🔔 벨 ON', edit:'✏️ 편집',
-    selectTime:'시간 선택', confirmTime:'확인', cancelTime:'취소',
-    fmtDateBar:(d)=>{const wd=['일','월','화','수','목','금','토'];return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${wd[d.getDay()]}요일)`;},
-    fmtWeekday:(iso)=>{const [y,m,dy]=iso.split('-').map(Number);return ['일','월','화','수','목','금','토'][new Date(y,m-1,dy).getDay()]+'요';}
+  fr: {
+    scheduleTitle:'PROGRAMME', nowLabel:'EN COURS', notStarted:'Pas encore commencé',
+    taskDone:'Session terminée', onBreak:'En pause', noTask:'Aucune tâche planifiée',
+    timeLeft:(m,s)=>m>0?`${m}m ${s}s restantes`:`${s}s restantes`,
+    done:'Terminé',
+    editTitle:'MODIFIER LE PROGRAMME', colName:'Tâche', colDate:'Date',
+    colStart:'Début', colEnd:'Fin', colDur:'Min',
+    addTask:'+ Ajouter une tâche', reset:'↺ Réinitialiser', cancel:'Annuler', save:'Enregistrer',
+    bell:'🔔 Sonnerie', bellOn:'🔔 Sonnerie On', edit:'✏️ Modifier',
+    selectTime:'Choisir l\'heure', confirmTime:'OK', cancelTime:'Annuler',
+    fmtDateBar:(d)=>{
+      const wd=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+      const mo=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+      return `${wd[d.getDay()]} ${d.getDate()} ${mo[d.getMonth()]} ${d.getFullYear()}`;
+    },
+    fmtWeekday:(iso)=>{
+      const [y,m,dy]=iso.split('-').map(Number);
+      return ['dim','lun','mar','mer','jeu','ven','sam'][new Date(y,m-1,dy).getDay()];
+    }
   }
 };
 
@@ -585,7 +599,7 @@ function buildList() {
       const lbl = document.createElement('div');
       lbl.className = 'date-group-label';
       if (dateKey === todayISO()) {
-        lbl.textContent = lang==='en'?'Today':lang==='ja'?'今日':lang==='ko'?'오늘':'今天';
+        lbl.textContent = {en:'Today','zh-TW':'今天','zh-CN':'今天',es:'Hoy',fr:"Aujourd'hui"}[lang]||'Today';
       } else {
         const [y,m,d] = dateKey.split('-').map(Number);
         lbl.textContent = lang==='en'
