@@ -263,6 +263,60 @@
   .price-cta:hover { background: #4ade80; transform: translateY(-1px); }
   .price-note { font-size: 0.75rem; color: var(--text3); margin-top: 14px; }
 
+  /* ── Platform badges ── */
+  .platform-badge {
+    background: var(--s1); border: 1px solid var(--border);
+    border-radius: 100px; padding: 5px 14px;
+    font-size: 0.75rem; font-weight: 600; color: var(--text2);
+    white-space: nowrap;
+  }
+
+  /* ── Screen share section ── */
+  #screenshare {
+    background: linear-gradient(135deg, rgba(34,197,94,.06) 0%, transparent 60%);
+    border: 1px solid rgba(34,197,94,.15); border-radius: 24px;
+    padding: 56px 48px; margin: 0 auto 0; max-width: 1100px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center;
+  }
+  @media (max-width: 768px) { #screenshare { grid-template-columns: 1fr; padding: 36px 24px; gap: 32px; } }
+  .ss-steps { display: flex; flex-direction: column; gap: 22px; }
+  .ss-step  { display: flex; gap: 16px; align-items: flex-start; }
+  .ss-num {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 800; color: var(--green);
+  }
+  .ss-step h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
+  .ss-step p  { font-size: 0.82rem; color: var(--text2); line-height: 1.6; }
+  .ss-visual {
+    background: #0d0d0d; border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+  }
+  .ss-gmeet-bar {
+    background: #1a1a1a; padding: 10px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .ss-gmeet-dot { font-size: 0.7rem; color: var(--green); font-weight: 700; letter-spacing:.06em; }
+  .ss-gmeet-title { font-size: 0.72rem; color: var(--text3); }
+  .ss-screen {
+    padding: 16px; display: grid; grid-template-columns: 1fr 2fr; gap: 8px; min-height: 180px;
+  }
+  .ss-left-mini { background: #111; border-radius: 8px; padding: 10px 8px; }
+  .ss-mini-title { font-size: 0.45rem; letter-spacing:.16em; color:var(--text3); text-transform:uppercase; margin-bottom:8px; }
+  .ss-mini-item { display:flex; align-items:center; gap:5px; padding:4px 5px; border-radius:4px; margin-bottom:2px; }
+  .ss-mini-item.active { background:rgba(34,197,94,.1); }
+  .ss-mini-dot { width:5px;height:5px;border-radius:50%;background:#2a2a2a;flex-shrink:0; }
+  .ss-mini-dot.active { background:var(--green); }
+  .ss-mini-text { font-size:0.42rem; color:#666; }
+  .ss-mini-item.active .ss-mini-text { color:var(--green); }
+  .ss-right-mini { background:#111; border-radius:8px; padding:10px; display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px; }
+  .ss-mini-clock { font-size:1.6rem;font-weight:800;color:var(--amber);font-variant-numeric:tabular-nums;line-height:1; }
+  .ss-mini-task  { font-size:0.55rem;font-weight:700;color:var(--text); }
+  .ss-mini-bar   { width:80%;height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden; }
+  .ss-mini-fill  { height:100%;width:55%;background:var(--green);border-radius:2px; }
+
   /* ── Footer ── */
   footer {
     border-top: 1px solid var(--border); padding: 32px 24px;
@@ -281,6 +335,7 @@
 <nav>
   <div class="nav-logo">Task<span>Clock</span></div>
   <ul>
+    <li><a href="#screenshare">Screen Share</a></li>
     <li><a href="#use-cases">Use Cases</a></li>
     <li><a href="#features">Features</a></li>
     <li><a href="#pricing">Pricing</a></li>
@@ -292,11 +347,21 @@
 <div id="hero">
   <div class="hero-glow"></div>
   <div class="badge">Now Available</div>
-  <h1>Keep Every <em>Moment</em><br>On Track</h1>
-  <p class="hero-sub">Real-time schedule display for meetings, workshops, fitness classes and presentations. Everyone in the room knows exactly what's happening — and what's next.</p>
+  <h1>Your Meeting Agenda,<br><em>Live on Screen</em></h1>
+  <p class="hero-sub">Share TaskClock in Google Meet, Zoom, or Teams — every participant sees the agenda, current topic, and time remaining. No more "how long do we have left?"</p>
   <div class="hero-btns">
     <a href="schedule.html" class="btn-primary">Try for Free →</a>
-    <a href="#features" class="btn-secondary">See How It Works</a>
+    <a href="#screenshare" class="btn-secondary">How Screen Share Works</a>
+  </div>
+
+  <!-- Platform logos strip -->
+  <div style="display:flex;align-items:center;gap:10px;margin-top:32px;flex-wrap:wrap;justify-content:center">
+    <span style="font-size:0.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-right:4px">Works with</span>
+    <div class="platform-badge">🎥 Google Meet</div>
+    <div class="platform-badge">💻 Zoom</div>
+    <div class="platform-badge">🟦 Microsoft Teams</div>
+    <div class="platform-badge">🎙 Webex</div>
+    <div class="platform-badge">+ Any screen share</div>
   </div>
 
   <!-- App mockup -->
@@ -355,10 +420,10 @@
   <h2 class="section-title">Built for Anyone<br>Who Runs on Time</h2>
   <p class="section-sub">If you've ever wished your audience could see the clock as clearly as you do, TaskClock is for you.</p>
   <div class="use-grid">
-    <div class="use-card">
-      <div class="use-icon">🤝</div>
-      <h3>Meeting Facilitators</h3>
-      <p>Keep agenda items on time. Everyone sees what's being discussed and how much time is left.</p>
+    <div class="use-card" style="border-color:rgba(34,197,94,.25);background:rgba(34,197,94,.04)">
+      <div class="use-icon">🎥</div>
+      <h3>Remote Meetings</h3>
+      <p>Share your screen on Google Meet, Zoom, or Teams. Every participant sees the live agenda — no one needs to ask "what's next?"</p>
     </div>
     <div class="use-card">
       <div class="use-icon">🧘</div>
@@ -483,6 +548,89 @@
     <div class="lang-pill"><span class="lang-flag">🇲🇽</span> Español</div>
     <div class="lang-pill"><span class="lang-flag">🇨🇦</span> Français</div>
   </div>
+</section>
+
+<!-- Screen Share Section -->
+<section style="padding-bottom:0">
+<div id="screenshare">
+  <div>
+    <div class="section-tag">Screen Share</div>
+    <h2 class="section-title" style="font-size:clamp(1.6rem,3.5vw,2.4rem)">Run Your Meeting.<br>Share Your Screen.<br><em style="color:var(--green)">Everyone Stays in Sync.</em></h2>
+    <div class="ss-steps" style="margin-top:28px">
+      <div class="ss-step">
+        <div class="ss-num">1</div>
+        <div>
+          <h3>Set up your agenda</h3>
+          <p>Add your meeting topics, start times, and duration. Takes under a minute.</p>
+        </div>
+      </div>
+      <div class="ss-step">
+        <div class="ss-num">2</div>
+        <div>
+          <h3>Share your browser tab</h3>
+          <p>In Google Meet, Zoom, or Teams — click "Share Screen" and select the TaskClock tab.</p>
+        </div>
+      </div>
+      <div class="ss-step">
+        <div class="ss-num">3</div>
+        <div>
+          <h3>Everyone sees it live</h3>
+          <p>Current topic, time remaining, and progress bar — visible to every participant in real time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="ss-visual">
+      <div class="ss-gmeet-bar">
+        <div class="ss-gmeet-dot">⬤ &nbsp;Sharing your screen</div>
+        <div class="ss-gmeet-title">Google Meet · Team Standup</div>
+        <div style="font-size:.65rem;color:#333">Stop sharing</div>
+      </div>
+      <div class="ss-screen">
+        <div class="ss-left-mini">
+          <div class="ss-mini-title">Schedule</div>
+          <div class="ss-mini-item" style="opacity:.3">
+            <div class="ss-mini-dot"></div>
+            <div class="ss-mini-text">1. Intro</div>
+          </div>
+          <div class="ss-mini-item" style="opacity:.3">
+            <div class="ss-mini-dot"></div>
+            <div class="ss-mini-text">2. Updates</div>
+          </div>
+          <div class="ss-mini-item active">
+            <div class="ss-mini-dot active"></div>
+            <div class="ss-mini-text">3. Discussion</div>
+          </div>
+          <div class="ss-mini-item">
+            <div class="ss-mini-dot"></div>
+            <div class="ss-mini-text">4. Action Items</div>
+          </div>
+          <div class="ss-mini-item">
+            <div class="ss-mini-dot"></div>
+            <div class="ss-mini-text">5. Wrap Up</div>
+          </div>
+        </div>
+        <div class="ss-right-mini">
+          <div style="font-size:.4rem;letter-spacing:.2em;color:var(--green);font-weight:700;text-transform:uppercase">NOW</div>
+          <div class="ss-mini-clock">9:38</div>
+          <div class="ss-mini-task">Discussion</div>
+          <div class="ss-mini-bar"><div class="ss-mini-fill"></div></div>
+          <div style="font-size:.42rem;color:var(--text3);margin-top:2px">12m 0s remaining</div>
+        </div>
+      </div>
+      <!-- Participant row -->
+      <div style="display:flex;gap:6px;padding:10px 16px;border-top:1px solid var(--border);background:#0d0d0d">
+        <div style="width:32px;height:24px;background:#1a2a1a;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:var(--green)">AK</div>
+        <div style="width:32px;height:24px;background:#1a1a2a;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#7eb8d8">MJ</div>
+        <div style="width:32px;height:24px;background:#2a1a1a;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#e8a;">SR</div>
+        <div style="width:32px;height:24px;background:#1e1e1e;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#555">+4</div>
+        <div style="margin-left:auto;font-size:.55rem;color:var(--text3);align-self:center">7 participants</div>
+      </div>
+    </div>
+    <p style="font-size:.75rem;color:var(--text3);text-align:center;margin-top:12px">Works with any screen sharing tool — no plugin needed.</p>
+  </div>
+</div>
 </section>
 
 <!-- Pricing -->
